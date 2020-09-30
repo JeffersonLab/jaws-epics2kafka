@@ -35,7 +35,7 @@ def pomConfig = {
     }
 
     scm {
-        url "https://github.com/JeffersonLab/connect-transforms"
+        url "https://github.com/JeffersonLab/jtransforms"
     }
 }
 
@@ -44,12 +44,12 @@ publishing {
         ProjectPublication(MavenPublication) {
             from components.java
             groupId group
-            artifactId 'connect-transforms'
+            artifactId 'jtransforms'
             version version
             pom.withXml {
                 def root = asNode()
                 root.appendNode('description', 'JLab Kafka Connect transforms')
-                root.appendNode('name', 'transforms')
+                root.appendNode('name', 'jtransforms')
                 root.children().last() + pomConfig
             }
         }
@@ -64,9 +64,9 @@ bintray {
 
     pkg {
         repo = 'maven'
-        name = 'connect-transforms'
+        name = 'jtransforms'
         licenses = ['MIT']
-        vcsUrl = 'https://github.com/JeffersonLab/connect-transforms.git'
+        vcsUrl = 'https://github.com/JeffersonLab/jtransforms.git'
         version {
             name = project.version
         }
