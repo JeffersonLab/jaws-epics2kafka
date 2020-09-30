@@ -8,7 +8,6 @@ import org.apache.kafka.connect.data.Struct;
 import org.apache.kafka.connect.transforms.predicates.Predicate;
 import org.apache.kafka.connect.transforms.util.RegexValidator;
 import org.apache.kafka.connect.transforms.util.SimpleConfig;
-import org.jlab.kafka.connect.transforms.Substitute;
 
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -20,22 +19,22 @@ import static org.apache.kafka.connect.transforms.util.Requirements.requireStruc
 
 public abstract class FieldMatches<R extends ConnectRecord<R>> implements Predicate<R> {
     private static final String PURPOSE = "field matches predicate";
-    private static final String PATTERN_CONFIG = "pattern";
     private static final String FIELD_CONFIG = "field";
+    private static final String PATTERN_CONFIG = "pattern";
 
     public static final String OVERVIEW_DOC = "A predicate which is true for records with a field value that matches the configured regular expression.";
 
     public static final ConfigDef CONFIG_DEF = new ConfigDef()
-            .define(PATTERN_CONFIG, ConfigDef.Type.STRING, ConfigDef.NO_DEFAULT_VALUE,
-                    ConfigDef.CompositeValidator.of(new ConfigDef.NonEmptyString(), new RegexValidator()),
-                    ConfigDef.Importance.MEDIUM,
-                    "A Java regular expression for matching against the value of a record's field.")
             .define(FIELD_CONFIG, ConfigDef.Type.STRING, ConfigDef.NO_DEFAULT_VALUE,
                     ConfigDef.CompositeValidator.of(new ConfigDef.NonEmptyString()),
                     ConfigDef.Importance.MEDIUM,
-                    "A string containing the name of the field in which the field value will be examined");
-    private Pattern pattern;
+                    "A string containing the name of the field in which the field value will be examined")
+            .define(PATTERN_CONFIG, ConfigDef.Type.STRING, ConfigDef.NO_DEFAULT_VALUE,
+                    ConfigDef.CompositeValidator.of(new ConfigDef.NonEmptyString(), new RegexValidator()),
+                    ConfigDef.Importance.MEDIUM,
+                    "A Java regular expression for matching against the value of a record's field.");
     private String fieldName;
+    private Pattern pattern;
 
     @Override
     public ConfigDef config() {
@@ -52,28 +51,26 @@ public abstract class FieldMatches<R extends ConnectRecord<R>> implements Predic
     }
 
     private boolean testSchemaless(R record) {
-        final Map<String, Object> value = requireMap(operatingValue(record), PURPOSE);
+        final Map<String, Object> map = requireMap(operatingValue(record), PURPOSE);
 
-        Object originalValue = value.get(fieldName);
+        Object value = map.get(fieldName);
 
-        if(originalValue != null && originalValue instanceof String) {
-            String originalString = (String)originalValue;
-
-            return pattern.matcher(originalString).matches();
-        }
-
-        return false;
+        return testField(value);
     }
 
     private boolean testWithSchema(R record) {
-        final Struct value = requireStruct(operatingValue(record), PURPOSE);
+        final Struct struct = requireStruct(operatingValue(record), PURPOSE);
 
-        Object originalValue = value.get(fieldName);
+        Object value = struct.get(fieldName);
 
-        if(originalValue != null && originalValue instanceof String) {
-            String originalString = (String)originalValue;
+        return testField(value);
+    }
 
-            return pattern.matcher(originalString).matches();
+    private boolean testField(Object value) {
+        if(value != null && value instanceof String) {
+            String valueStr = (String)value;
+
+            return pattern.matcher(valueStr).matches();
         }
 
         return false;
@@ -87,6 +84,9 @@ public abstract class FieldMatches<R extends ConnectRecord<R>> implements Predic
     @Override
     public void configure(Map<String, ?> configs) {
         SimpleConfig simpleConfig = new SimpleConfig(config(), configs);
+
+        this.fieldName = simpleConfig.getString(FIELD_CONFIG);
+
         Pattern result;
         String value = simpleConfig.getString(PATTERN_CONFIG);
         try {
@@ -95,15 +95,13 @@ public abstract class FieldMatches<R extends ConnectRecord<R>> implements Predic
             throw new ConfigException(PATTERN_CONFIG, value, "entry must be a Java-compatible regular expression: " + e.getMessage());
         }
         this.pattern = result;
-
-        this.fieldName = simpleConfig.getString(FIELD_CONFIG);
     }
 
     @Override
     public String toString() {
         return "FieldMatches{" +
-                "pattern=" + pattern +
-                ", fieldName=" + fieldName +
+                "fieldName=" + fieldName +
+                ", pattern=" + pattern +
                 '}';
     }
 
