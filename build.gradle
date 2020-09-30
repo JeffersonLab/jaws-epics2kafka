@@ -1,13 +1,74 @@
 plugins {
     id 'java-library'
+    id 'maven-publish'
+    id 'com.jfrog.bintray' version "1.8.5"
 }
+
+description "JLab Kafka Connect transforms"
+group 'org.jlab.kafka.connect.transform'
+version '0.1.0'
 
 repositories {
     jcenter()
 }
 
 dependencies {
-    api group: 'org.apache.kafka', name: 'connect-transforms', version: '2.4.0'
+    implementation group: 'org.apache.kafka', name: 'connect-transforms', version: '2.4.0'
 
     testImplementation 'junit:junit:4.12'
+}
+
+def pomConfig = {
+    licenses {
+        license {
+            name "MIT License"
+            url "http://www.opensource.org/licenses/mit-license"
+            distribution "repo"
+        }
+    }
+    developers {
+        developer {
+            id "slominskir"
+            name "Ryan Slominski"
+            email "ryans@jlab.org"
+        }
+    }
+
+    scm {
+        url "https://github.com/JeffersonLab/connect-transforms"
+    }
+}
+
+publishing {
+    publications {
+        ProjectPublication(MavenPublication) {
+            from components.java
+            groupId group
+            artifactId 'connect-transforms'
+            version version
+            pom.withXml {
+                def root = asNode()
+                root.appendNode('description', 'JLab Kafka Connect transforms')
+                root.appendNode('name', 'transforms')
+                root.children().last() + pomConfig
+            }
+        }
+    }
+}
+
+bintray {
+    user = project.hasProperty('bintrayUser') ? project.property('bintrayUser') : System.getenv('BINTRAY_USER')
+    key = project.hasProperty('bintrayApiKey') ? project.property('bintrayApiKey') : System.getenv('BINTRAY_API_KEY')
+
+    publications = ['ProjectPublication']
+
+    pkg {
+        repo = 'maven'
+        name = 'connect-transforms'
+        licenses = ['MIT']
+        vcsUrl = 'https://github.com/JeffersonLab/connect-transforms.git'
+        version {
+            name = project.version
+        }
+    }
 }
