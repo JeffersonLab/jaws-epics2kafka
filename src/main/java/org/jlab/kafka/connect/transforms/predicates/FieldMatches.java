@@ -1,4 +1,4 @@
-package org.jlab.kafka.connect.transforms.org.jlab.kafka.connect.transforms.predicates;
+package org.jlab.kafka.connect.transforms.predicates;
 
 import org.apache.kafka.common.config.ConfigDef;
 import org.apache.kafka.common.config.ConfigException;
@@ -10,7 +10,6 @@ import org.apache.kafka.connect.transforms.util.RegexValidator;
 import org.apache.kafka.connect.transforms.util.SimpleConfig;
 
 import java.util.Map;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
