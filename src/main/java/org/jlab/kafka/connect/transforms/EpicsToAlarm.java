@@ -61,7 +61,8 @@ public abstract class EpicsToAlarm<R extends ConnectRecord<R>> implements Transf
         final Schema prioritySchema = SchemaBuilder
                 .string()
                 .doc("Alarm severity organized as a way for operators to prioritize which alarms to take action on first")
-                .parameter("io.confluent.connect.avro.Enum", "AlarmPriority")
+                .parameter("io.confluent.connect.avro.enum.doc.AlarmPriority", "Enumeration of possible alarm priorities")
+                .parameter("io.confluent.connect.avro.Enum", "org.jlab.kafka.alarms.AlarmPriority")
                 .parameter("io.confluent.connect.avro.Enum.1", "P1_LIFE")
                 .parameter("io.confluent.connect.avro.Enum.2", "P2_PROPERTY")
                 .parameter("io.confluent.connect.avro.Enum.3", "P3_PRODUCTIVITY")
@@ -69,6 +70,7 @@ public abstract class EpicsToAlarm<R extends ConnectRecord<R>> implements Transf
                 .build();
 
         builder.name("org.jlab.kafka.alarms.ActiveAlarm");
+        builder.doc("Alarms currently alarming");
         builder.version(1);
         builder.field("priority", prioritySchema);
         builder.field("acknowledged", SchemaBuilder.bool().doc("Indicates whether this alarm has been explicitly acknowledged - useful for latching alarms which can only be cleared after acknowledgement").defaultValue(false).build());
