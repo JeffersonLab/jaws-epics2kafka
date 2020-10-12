@@ -20,6 +20,31 @@ public abstract class EpicsToAlarm<R extends ConnectRecord<R>> implements Transf
 
     private static final String PURPOSE = "transform epics2kafka messages to kafka-alarm-system format";
 
+    final Schema prioritySchema = SchemaBuilder
+            .string()
+            .doc("Alarm severity organized as a way for operators to prioritize which alarms to take action on first")
+            .parameter("io.confluent.connect.avro.enum.doc.AlarmPriority", "Enumeration of possible alarm priorities")
+            .parameter("io.confluent.connect.avro.Enum", "org.jlab.kafka.alarms.AlarmPriority")
+            .parameter("io.confluent.connect.avro.Enum.1", "P1_LIFE")
+            .parameter("io.confluent.connect.avro.Enum.2", "P2_PROPERTY")
+            .parameter("io.confluent.connect.avro.Enum.3", "P3_PRODUCTIVITY")
+            .parameter("io.confluent.connect.avro.Enum.4", "P4_DIAGNOSTIC")
+            .build();
+
+    final Schema acknowledgedSchema = SchemaBuilder
+            .bool()
+            .doc("Indicates whether this alarm has been explicitly acknowledged - useful for latching alarms which can only be cleared after acknowledgement")
+            .defaultValue(false)
+            .build();
+
+    final Schema updatedSchema = SchemaBuilder.struct()
+            .name("org.jlab.kafka.alarms.ActiveAlarm")
+            .doc("Alarms currently alarming")
+            .version(1)
+            .field("priority", prioritySchema)
+            .field("acknowledged", acknowledgedSchema)
+            .build();
+
     /**
      * Apply transformation to the {@code record} and return another record object (which may be {@code record} itself) or {@code null},
      * corresponding to a map or filter operation respectively.
@@ -42,9 +67,7 @@ public abstract class EpicsToAlarm<R extends ConnectRecord<R>> implements Transf
         System.err.println("applySchemaless!");
         final Map<String, Object> map = requireMap(operatingValue(record), PURPOSE);
 
-        final Map<String, Object> updatedMap = new HashMap<>();
-
-        doUpdate(map, updatedMap);
+        final Map<String, Object> updatedMap = doUpdate(map);
 
         return newRecord(record, null, updatedMap);
     }
@@ -53,47 +76,57 @@ public abstract class EpicsToAlarm<R extends ConnectRecord<R>> implements Transf
         System.err.println("applyWithSchema!");
         final Struct struct = requireStruct(operatingValue(record), PURPOSE);
 
-        Schema schema = operatingSchema(record);
+        //Schema schema = operatingSchema(record);
 
-        final SchemaBuilder builder = SchemaBuilder.struct();
-
-        // TODO: Don't re-build this EVERY time!
-        final Schema prioritySchema = SchemaBuilder
-                .string()
-                .doc("Alarm severity organized as a way for operators to prioritize which alarms to take action on first")
-                .parameter("io.confluent.connect.avro.enum.doc.AlarmPriority", "Enumeration of possible alarm priorities")
-                .parameter("io.confluent.connect.avro.Enum", "org.jlab.kafka.alarms.AlarmPriority")
-                .parameter("io.confluent.connect.avro.Enum.1", "P1_LIFE")
-                .parameter("io.confluent.connect.avro.Enum.2", "P2_PROPERTY")
-                .parameter("io.confluent.connect.avro.Enum.3", "P3_PRODUCTIVITY")
-                .parameter("io.confluent.connect.avro.Enum.4", "P4_DIAGNOSTIC")
-                .build();
-
-        builder.name("org.jlab.kafka.alarms.ActiveAlarm");
-        builder.doc("Alarms currently alarming");
-        builder.version(1);
-        builder.field("priority", prioritySchema);
-        builder.field("acknowledged", SchemaBuilder.bool().doc("Indicates whether this alarm has been explicitly acknowledged - useful for latching alarms which can only be cleared after acknowledgement").defaultValue(false).build());
-
-        Schema updatedSchema = builder.build();
-
-        final Struct updatedStruct = new Struct(updatedSchema);
-
-        doUpdate(struct, updatedStruct);
+        final Struct updatedStruct = doUpdate(struct, updatedSchema);
 
         return newRecord(record, updatedSchema, updatedStruct);
     }
 
-    private void doUpdate(Map<String, Object> original, Map<String, Object> updated) {
+    private Map<String, Object> doUpdate(Map<String, Object> original) {
         System.err.println("map doUpdate!");
-        updated.put("priority", "P4_DIAGNOSTIC");
-        updated.put("acknowledged", false);
+
+        Map<String, Object> updated = null;
+        Object priority = null;
+
+        byte severity = (byte)original.get("severity");
+
+        System.err.println("severity: " + severity);
+
+        if(severity != 0) {
+            priority = "P4_DIAGNOSTIC";
+        }
+
+        if(priority != null) {
+            updated = new HashMap<>();
+            updated.put("priority", priority);
+            updated.put("acknowledged", false);
+        }
+
+        return updated;
     }
 
-    public void doUpdate(Struct original, Struct updated) {
+    public Struct doUpdate(Struct original, Schema updatedSchema) {
         System.err.println("struct doUpdate!");
-        updated.put("priority", "P4_DIAGNOSTIC");
-        updated.put("acknowledged", false);
+
+        Struct updated = null;
+        Object priority = null;
+
+        byte severity = original.getInt8("severity");
+
+        System.err.println("severity: " + severity);
+
+        if(severity != 0) {
+            priority = "P4_DIAGNOSTIC";
+        }
+
+        if(priority != null) {
+            updated = new Struct(updatedSchema);
+            updated.put("priority", priority);
+            updated.put("acknowledged", false);
+        }
+
+        return updated;
     }
 
     /**
