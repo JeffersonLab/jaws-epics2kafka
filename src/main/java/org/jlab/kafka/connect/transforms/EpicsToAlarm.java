@@ -1,11 +1,20 @@
 package org.jlab.kafka.connect.transforms;
 
 import org.apache.kafka.common.config.ConfigDef;
+import org.apache.kafka.common.header.internals.RecordHeader;
+import org.apache.kafka.common.record.Record;
 import org.apache.kafka.connect.connector.ConnectRecord;
 import org.apache.kafka.connect.data.*;
+import org.apache.kafka.connect.header.ConnectHeaders;
+import org.apache.kafka.connect.header.Header;
 import org.apache.kafka.connect.transforms.Transformation;
 import org.apache.kafka.connect.transforms.util.SimpleConfig;
 
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -45,6 +54,28 @@ public abstract class EpicsToAlarm<R extends ConnectRecord<R>> implements Transf
             .field("acknowledged", acknowledgedSchema)
             .optional()
             .build();
+
+    final ConnectHeaders headers = new ConnectHeaders();
+
+    {
+        String user = System.getProperty("user.name");
+        String hostname = "localhost";
+
+        if(user == null) {
+            user = "";
+        }
+
+        try {
+            hostname = InetAddress.getLocalHost().getHostName();
+        } catch (UnknownHostException e) {
+            System.err.println("Unable to determine hostname");
+            e.printStackTrace(); // We could do better...
+        }
+
+        headers.addString("user", user);
+        headers.addString("host", hostname);
+        headers.addString("producer", "epics2alarms");
+    }
 
     /**
      * Apply transformation to the {@code record} and return another record object (which may be {@code record} itself) or {@code null},
@@ -176,7 +207,7 @@ public abstract class EpicsToAlarm<R extends ConnectRecord<R>> implements Transf
 
         @Override
         protected R newRecord(R record, Schema updatedSchema, Object updatedValue) {
-            return record.newRecord(record.topic(), record.kafkaPartition(), updatedSchema, updatedValue, record.valueSchema(), record.value(), record.timestamp());
+            return record.newRecord(record.topic(), record.kafkaPartition(), updatedSchema, updatedValue, record.valueSchema(), record.value(), record.timestamp(), headers);
         }
 
     }
@@ -195,7 +226,7 @@ public abstract class EpicsToAlarm<R extends ConnectRecord<R>> implements Transf
 
         @Override
         protected R newRecord(R record, Schema updatedSchema, Object updatedValue) {
-            return record.newRecord(record.topic(), record.kafkaPartition(), record.keySchema(), record.key(), updatedSchema, updatedValue, record.timestamp());
+            return record.newRecord(record.topic(), record.kafkaPartition(), record.keySchema(), record.key(), updatedSchema, updatedValue, record.timestamp(), headers);
         }
     }
 }
