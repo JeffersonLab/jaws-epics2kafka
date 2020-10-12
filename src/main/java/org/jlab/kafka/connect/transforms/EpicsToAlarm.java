@@ -1,20 +1,14 @@
 package org.jlab.kafka.connect.transforms;
 
 import org.apache.kafka.common.config.ConfigDef;
-import org.apache.kafka.common.header.internals.RecordHeader;
-import org.apache.kafka.common.record.Record;
 import org.apache.kafka.connect.connector.ConnectRecord;
 import org.apache.kafka.connect.data.*;
 import org.apache.kafka.connect.header.ConnectHeaders;
-import org.apache.kafka.connect.header.Header;
 import org.apache.kafka.connect.transforms.Transformation;
 import org.apache.kafka.connect.transforms.util.SimpleConfig;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
