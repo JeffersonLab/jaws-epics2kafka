@@ -43,6 +43,7 @@ public abstract class EpicsToAlarm<R extends ConnectRecord<R>> implements Transf
             .version(1)
             .field("priority", prioritySchema)
             .field("acknowledged", acknowledgedSchema)
+            .optional()
             .build();
 
     /**
