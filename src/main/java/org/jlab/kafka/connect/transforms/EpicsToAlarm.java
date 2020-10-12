@@ -84,7 +84,7 @@ public abstract class EpicsToAlarm<R extends ConnectRecord<R>> implements Transf
         return newRecord(record, updatedSchema, updatedStruct);
     }
 
-    private void doUpdate(Map original, Map updated) {
+    private void doUpdate(Map<String, Object> original, Map<String, Object> updated) {
         System.err.println("map doUpdate!");
         updated.put("priority", "P4_DIAGNOSTIC");
         updated.put("acknowledged", false);

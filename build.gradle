@@ -8,6 +8,14 @@ description "JLab Kafka Connect transforms"
 group 'org.jlab.kafka.connect.transform'
 version '0.3.0'
 
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+compileJava {
+    options.encoding = 'UTF-8'
+    options.compilerArgs << "-Xlint:unchecked" << "-Xlint:deprecation"
+}
+
 repositories {
     jcenter()
 }
