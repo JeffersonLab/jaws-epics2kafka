@@ -93,9 +93,10 @@ public abstract class EpicsToAlarm<R extends ConnectRecord<R>> implements Transf
 
         System.err.println("severity: " + severity);
 
-        if(severity != 0) {
+
+        if(severity == 1 || severity == 2) { // MINOR or MAJOR
             priority = "P4_DIAGNOSTIC";
-        }
+        } // 0 and 3 mean NO_ALARM or INVALID, so we use null
 
         if(priority != null) {
             updated = new HashMap<>();
@@ -116,9 +117,9 @@ public abstract class EpicsToAlarm<R extends ConnectRecord<R>> implements Transf
 
         System.err.println("severity: " + severity);
 
-        if(severity != 0) {
+        if(severity == 1 || severity == 2) { // MINOR or MAJOR
             priority = "P4_DIAGNOSTIC";
-        }
+        } // 0 and 3 mean NO_ALARM or INVALID, so we use null
 
         if(priority != null) {
             updated = new Struct(updatedSchema);
