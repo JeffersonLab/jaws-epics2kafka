@@ -88,6 +88,7 @@ public abstract class EpicsToAlarm<R extends ConnectRecord<R>> implements Transf
 
     final Schema alarmingSchema = SchemaBuilder
             .struct()
+            .optional()
             .name("org.jlab.kafka.alarms.Alarming")
             .doc("Alarming state for a basic alarm")
             .field("alarming", SchemaBuilder.bool().doc("true if the alarm is alarming, false otherwise").build())
@@ -95,6 +96,7 @@ public abstract class EpicsToAlarm<R extends ConnectRecord<R>> implements Transf
 
     final Schema ackSchema = SchemaBuilder
             .struct()
+            .optional()
             .name("org.jlab.kafka.alarms.Ack")
             .doc("A basic acknowledgment message")
             .field("acknowledged", SchemaBuilder.bool().doc("true if the alarm is acknowledged, false otherwise").build())
@@ -102,6 +104,7 @@ public abstract class EpicsToAlarm<R extends ConnectRecord<R>> implements Transf
 
     final Schema alarmingEPICSSchema = SchemaBuilder
             .struct()
+            .optional()
             .name("org.jlab.kafka.alarms.AlarmingEPICS")
             .doc("EPICS alarming state")
             .field("sevr", sevrSchema)
@@ -110,6 +113,7 @@ public abstract class EpicsToAlarm<R extends ConnectRecord<R>> implements Transf
 
     final Schema ackEPICSSchema = SchemaBuilder
             .struct()
+            .optional()
             .name("org.jlab.kafka.alarms.AckEPICS")
             .doc("EPICS acknowledgement state")
             .field("ack", ackEnumSchema)
@@ -120,13 +124,9 @@ public abstract class EpicsToAlarm<R extends ConnectRecord<R>> implements Transf
             .name("io.confluent.connect.avro.Union")
             .doc("Two types of messages are allowed: Alarming and Acknowledgement; There can be multiple flavors of each type for different alarm producers; modeled as a nested union to avoid complications of union at root of schema.")
             .field("Alarming", alarmingSchema)
-            .optional()
             .field("Ack", ackSchema)
-            .optional()
             .field("AlarmingEPICS", alarmingEPICSSchema)
-            .optional()
             .field("AckEPICS", ackEPICSSchema)
-            .optional()
             .build();
 
     final Schema updatedValueSchema = SchemaBuilder
@@ -186,26 +186,6 @@ public abstract class EpicsToAlarm<R extends ConnectRecord<R>> implements Transf
         }
     }
 
-    private R applySchemaless(R record) {
-        System.err.println("applySchemaless!");
-        final Map<String, Object> map = requireMap(operatingValue(record), PURPOSE);
-
-        final Map<String, Object> updatedMap = doUpdate(map);
-
-        return newRecord(record, null, updatedMap);
-    }
-
-    private R applyWithSchema(R record) {
-        System.err.println("applyWithSchema!");
-        final Struct struct = requireStruct(operatingValue(record), PURPOSE);
-
-        //Schema schema = operatingSchema(record);
-
-        final Struct updatedStruct = doUpdate(struct, updatedValueSchema);
-
-        return newRecord(record, updatedValueSchema, updatedStruct);
-    }
-
     /**
      * Configuration specification for this transformation.
      **/
@@ -231,9 +211,9 @@ public abstract class EpicsToAlarm<R extends ConnectRecord<R>> implements Transf
         final SimpleConfig config = new SimpleConfig(CONFIG_DEF, configs);
     }
 
-    protected abstract Map<String, Object> doUpdate(Map<String, Object> original);
+    protected abstract R applySchemaless(R record);
 
-    protected abstract Struct doUpdate(Struct original, Schema updatedSchema);
+    protected abstract R applyWithSchema(R record);
 
     protected abstract Schema operatingSchema(R record);
 
@@ -244,36 +224,48 @@ public abstract class EpicsToAlarm<R extends ConnectRecord<R>> implements Transf
     public static class Key<R extends ConnectRecord<R>> extends EpicsToAlarm<R> {
 
         @Override
-        protected Map<String, Object> doUpdate(Map<String, Object> original) {
+        protected R applySchemaless(R record) {
+            System.err.println("applySchemaless! (key)");
+            final String original = record.key().toString();
+
+            final Map<String, Object> updatedMap = doUpdate(original);
+
+            return newRecord(record, null, updatedMap);
+        }
+
+        @Override
+        protected R applyWithSchema(R record) {
+            System.err.println("applyWithSchema! (key)");
+            final String original = record.key().toString();
+
+            //Schema schema = operatingSchema(record);
+
+            final Struct updatedStruct = doUpdate(original, updatedKeySchema);
+
+            return newRecord(record, updatedKeySchema, updatedStruct);
+        }
+
+        protected Map<String, Object> doUpdate(String original) {
             System.err.println("map doUpdate (key)!");
 
             Map<String, Object> updated = new HashMap<>();
 
-            for(String key: original.keySet()) {
-                System.err.println("found key: " + key);
-            }
+            System.err.println("name: " + original);
 
-            String name = (String)original.values().iterator().next();
-
-            System.err.println("name: " + name);
-
-            updated.put("name", name);
+            updated.put("name", original);
             updated.put("type", "AlarmingEPICS");
 
             return updated;
         }
 
-        @Override
-        protected Struct doUpdate(Struct original, Schema updatedSchema) {
+        protected Struct doUpdate(String original, Schema updatedSchema) {
             System.err.println("struct doUpdate (key)!");
 
             Struct updated = new Struct(updatedSchema);
 
-            String name = original.toString();
+            System.err.println("name: " + original);
 
-            System.err.println("name: " + name);
-
-            updated.put("name", name);
+            updated.put("name", original);
             updated.put("type", "AlarmingEPICS");
 
             return updated;
@@ -299,6 +291,27 @@ public abstract class EpicsToAlarm<R extends ConnectRecord<R>> implements Transf
     public static class Value<R extends ConnectRecord<R>> extends EpicsToAlarm<R> {
 
         @Override
+        protected R applySchemaless(R record) {
+            System.err.println("applySchemaless!");
+            final Map<String, Object> map = requireMap(operatingValue(record), PURPOSE);
+
+            final Map<String, Object> updatedMap = doUpdate(map);
+
+            return newRecord(record, null, updatedMap);
+        }
+
+        @Override
+        protected R applyWithSchema(R record) {
+            System.err.println("applyWithSchema!");
+            final Struct struct = requireStruct(operatingValue(record), PURPOSE);
+
+            //Schema schema = operatingSchema(record);
+
+            final Struct updatedStruct = doUpdate(struct, updatedValueSchema);
+
+            return newRecord(record, updatedValueSchema, updatedStruct);
+        }
+
         protected Map<String, Object> doUpdate(Map<String, Object> original) {
             System.err.println("map doUpdate (value)!");
 
@@ -321,13 +334,12 @@ public abstract class EpicsToAlarm<R extends ConnectRecord<R>> implements Transf
             return updated;
         }
 
-        @Override
         protected Struct doUpdate(Struct original, Schema updatedSchema) {
             System.err.println("struct doUpdate (value)!");
 
             Struct updated = new Struct(updatedSchema);
-            Struct msg = new Struct(alarmingEPICSSchema);
-            updated.put("msg", msg);
+            Struct msg = new Struct(msgSchema);
+            Struct epicsStruct = new Struct(alarmingEPICSSchema);
 
             byte severity = original.getInt8("severity");
             byte status = original.getInt8("status");
@@ -338,8 +350,11 @@ public abstract class EpicsToAlarm<R extends ConnectRecord<R>> implements Transf
             String sevrStr = SeverityEnum.fromOrdinal(severity).name();
             String statStr = StatusEnum.fromOrdinal(status).name();
 
-            msg.put("sevr", sevrStr);
-            msg.put("stat", statStr);
+            epicsStruct.put("sevr", sevrStr);
+            epicsStruct.put("stat", statStr);
+
+            msg.put("AlarmingEPICS", epicsStruct);
+            updated.put("msg", msg);
 
             return updated;
         }
