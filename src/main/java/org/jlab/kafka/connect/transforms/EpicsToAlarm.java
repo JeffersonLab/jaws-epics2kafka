@@ -179,7 +179,10 @@ public abstract class EpicsToAlarm<R extends ConnectRecord<R>> implements Transf
     @Override
     public R apply(R record) {
         System.err.println("apply!");
-        if (operatingSchema(record) == null) {
+        System.err.println("checking for null");
+        if(operatingValue(record) == null) {
+            return record; // tombstone value or null key
+        } else if (operatingSchema(record) == null) {
             return applySchemaless(record);
         } else {
             return applyWithSchema(record);
