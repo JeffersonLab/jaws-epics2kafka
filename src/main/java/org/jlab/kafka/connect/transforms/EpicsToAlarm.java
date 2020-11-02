@@ -6,6 +6,8 @@ import org.apache.kafka.connect.data.*;
 import org.apache.kafka.connect.header.ConnectHeaders;
 import org.apache.kafka.connect.transforms.Transformation;
 import org.apache.kafka.connect.transforms.util.SimpleConfig;
+import org.jlab.kafka.connect.transforms.util.SeverityEnum;
+import org.jlab.kafka.connect.transforms.util.StatusEnum;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
@@ -23,30 +25,125 @@ public abstract class EpicsToAlarm<R extends ConnectRecord<R>> implements Transf
 
     private static final String PURPOSE = "transform epics2kafka messages to kafka-alarm-system format";
 
-    final Schema prioritySchema = SchemaBuilder
+    final Schema sevrSchema = SchemaBuilder
             .string()
-            .doc("Alarm severity organized as a way for operators to prioritize which alarms to take action on first")
-            .parameter("io.confluent.connect.avro.enum.doc.AlarmPriority", "Enumeration of possible alarm priorities")
-            .parameter("io.confluent.connect.avro.Enum", "org.jlab.kafka.alarms.AlarmPriority")
-            .parameter("io.confluent.connect.avro.Enum.1", "P1_LIFE")
-            .parameter("io.confluent.connect.avro.Enum.2", "P2_PROPERTY")
-            .parameter("io.confluent.connect.avro.Enum.3", "P3_PRODUCTIVITY")
-            .parameter("io.confluent.connect.avro.Enum.4", "P4_DIAGNOSTIC")
+            .doc("Alarming state (EPICS .SEVR field)")
+            .parameter("io.confluent.connect.avro.enum.doc.SevrEnum", "Enumeration of possible EPICS .SEVR values")
+            .parameter("io.confluent.connect.avro.Enum", "org.jlab.kafka.alarms.SevrEnum")
+            .parameter("io.confluent.connect.avro.Enum.1", "NO_ALARM")
+            .parameter("io.confluent.connect.avro.Enum.2", "MINOR")
+            .parameter("io.confluent.connect.avro.Enum.3", "MAJOR")
+            .parameter("io.confluent.connect.avro.Enum.4", "INVALID")
             .build();
 
-    final Schema acknowledgedSchema = SchemaBuilder
-            .bool()
+    final Schema statSchema = SchemaBuilder
+            .string()
+            .doc("Alarming status (EPICS .STAT field)")
+            .parameter("io.confluent.connect.avro.enum.doc.StatEnum", "Enumeration of possible EPICS .STAT values")
+            .parameter("io.confluent.connect.avro.Enum", "org.jlab.kafka.alarms.StatEnum")
+            .parameter("io.confluent.connect.avro.Enum.1", "NO_ALARM")
+            .parameter("io.confluent.connect.avro.Enum.2", "READ")
+            .parameter("io.confluent.connect.avro.Enum.3", "WRITE")
+            .parameter("io.confluent.connect.avro.Enum.4", "HIHI")
+            .parameter("io.confluent.connect.avro.Enum.5", "HIGH")
+            .parameter("io.confluent.connect.avro.Enum.6", "LOLO")
+            .parameter("io.confluent.connect.avro.Enum.7", "LOW")
+            .parameter("io.confluent.connect.avro.Enum.8", "STATE")
+            .parameter("io.confluent.connect.avro.Enum.9", "COS")
+            .parameter("io.confluent.connect.avro.Enum.10", "COMM")
+            .parameter("io.confluent.connect.avro.Enum.11", "TIMEOUT")
+            .parameter("io.confluent.connect.avro.Enum.12", "HW_LIMIT")
+            .parameter("io.confluent.connect.avro.Enum.13", "CALC")
+            .parameter("io.confluent.connect.avro.Enum.14", "SCAN")
+            .parameter("io.confluent.connect.avro.Enum.15", "LINK")
+            .parameter("io.confluent.connect.avro.Enum.16", "SOFT")
+            .parameter("io.confluent.connect.avro.Enum.17", "BAD_SUB")
+            .parameter("io.confluent.connect.avro.Enum.18", "UDF")
+            .parameter("io.confluent.connect.avro.Enum.19", "DISABLE")
+            .parameter("io.confluent.connect.avro.Enum.20", "SIMM")
+            .parameter("io.confluent.connect.avro.Enum.21", "READ_ACCESS")
+            .parameter("io.confluent.connect.avro.Enum.22", "WRITE_ACCESS")
+            .build();
+
+    final Schema ackEnumSchema = SchemaBuilder
+            .string()
             .doc("Indicates whether this alarm has been explicitly acknowledged - useful for latching alarms which can only be cleared after acknowledgement")
-            .defaultValue(false)
+            .parameter("io.confluent.connect.avro.enum.doc.EPICSAcknowledgementEnum", "Enumeration of possible EPICS acknowledgement states")
+            .parameter("io.confluent.connect.avro.Enum", "org.jlab.kafka.alarms.EPICSAcknowledgementEnum")
+            .parameter("io.confluent.connect.avro.Enum.1", "NO_ACK")
+            .parameter("io.confluent.connect.avro.Enum.2", "MINOR_ACK")
+            .parameter("io.confluent.connect.avro.Enum.3", "MAJOR_ACK")
             .build();
 
-    final Schema updatedSchema = SchemaBuilder.struct()
-            .name("org.jlab.kafka.alarms.ActiveAlarm")
-            .doc("Alarms currently alarming")
-            .version(1)
-            .field("priority", prioritySchema)
-            .field("acknowledged", acknowledgedSchema)
+    final Schema typeSchema = SchemaBuilder
+            .string()
+            .doc("The type of message included in the value - required as part of the key to ensure compaction keeps the latest message of each type")
+            .parameter("io.confluent.connect.avro.enum.doc.ActiveMessageType", "Enumeration of possible message types")
+            .parameter("io.confluent.connect.avro.Enum", "org.jlab.kafka.alarms.ActiveMessageType")
+            .parameter("io.confluent.connect.avro.Enum.1", "Alarming")
+            .parameter("io.confluent.connect.avro.Enum.2", "Ack")
+            .parameter("io.confluent.connect.avro.Enum.3", "AlarmingEPICS")
+            .parameter("io.confluent.connect.avro.Enum.4", "AckEPICS")
+            .build();
+
+    final Schema alarmingSchema = SchemaBuilder
+            .struct()
+            .name("org.jlab.kafka.alarms.Alarming")
+            .doc("Alarming state for a basic alarm")
+            .field("alarming", SchemaBuilder.bool().doc("true if the alarm is alarming, false otherwise").build())
+            .build();
+
+    final Schema ackSchema = SchemaBuilder
+            .struct()
+            .name("org.jlab.kafka.alarms.Ack")
+            .doc("A basic acknowledgment message")
+            .field("acknowledged", SchemaBuilder.bool().doc("true if the alarm is acknowledged, false otherwise").build())
+            .build();
+
+    final Schema alarmingEPICSSchema = SchemaBuilder
+            .struct()
+            .name("org.jlab.kafka.alarms.AlarmingEPICS")
+            .doc("EPICS alarming state")
+            .field("sevr", sevrSchema)
+            .field("stat", statSchema)
+            .build();
+
+    final Schema ackEPICSSchema = SchemaBuilder
+            .struct()
+            .name("org.jlab.kafka.alarms.AckEPICS")
+            .doc("EPICS acknowledgement state")
+            .field("ack", ackEnumSchema)
+            .build();
+
+    final Schema msgSchema = SchemaBuilder
+            .struct()
+            .name("io.confluent.connect.avro.Union")
+            .doc("Two types of messages are allowed: Alarming and Acknowledgement; There can be multiple flavors of each type for different alarm producers; modeled as a nested union to avoid complications of union at root of schema.")
+            .field("Alarming", alarmingSchema)
             .optional()
+            .field("Ack", ackSchema)
+            .optional()
+            .field("AlarmingEPICS", alarmingEPICSSchema)
+            .optional()
+            .field("AckEPICS", ackEPICSSchema)
+            .optional()
+            .build();
+
+    final Schema updatedValueSchema = SchemaBuilder
+            .struct()
+            .name("org.jlab.kafka.alarms.ActiveAlarmValue")
+            .doc("Alarming and Acknowledgements state")
+            .version(1)
+            .field("msg", msgSchema)
+            .build();
+
+    final Schema updatedKeySchema = SchemaBuilder
+            .struct()
+            .name("org.jlab.kafka.alarms.ActiveAlarmKey")
+            .doc("Active alarms state (alarming or acknowledgment)")
+            .version(1)
+            .field("name", SchemaBuilder.string().doc("The unique name of the alarm").build())
+            .field("type", typeSchema)
             .build();
 
     final ConnectHeaders headers = new ConnectHeaders();
@@ -104,56 +201,9 @@ public abstract class EpicsToAlarm<R extends ConnectRecord<R>> implements Transf
 
         //Schema schema = operatingSchema(record);
 
-        final Struct updatedStruct = doUpdate(struct, updatedSchema);
+        final Struct updatedStruct = doUpdate(struct, updatedValueSchema);
 
-        return newRecord(record, updatedSchema, updatedStruct);
-    }
-
-    private Map<String, Object> doUpdate(Map<String, Object> original) {
-        System.err.println("map doUpdate!");
-
-        Map<String, Object> updated = null;
-        Object priority = null;
-
-        byte severity = (byte)original.get("severity");
-
-        System.err.println("severity: " + severity);
-
-
-        if(severity == 1 || severity == 2) { // MINOR or MAJOR
-            priority = "P4_DIAGNOSTIC";
-        } // 0 and 3 mean NO_ALARM or INVALID, so we use null
-
-        if(priority != null) {
-            updated = new HashMap<>();
-            updated.put("priority", priority);
-            updated.put("acknowledged", false);
-        }
-
-        return updated;
-    }
-
-    public Struct doUpdate(Struct original, Schema updatedSchema) {
-        System.err.println("struct doUpdate!");
-
-        Struct updated = null;
-        Object priority = null;
-
-        byte severity = original.getInt8("severity");
-
-        System.err.println("severity: " + severity);
-
-        if(severity == 1 || severity == 2) { // MINOR or MAJOR
-            priority = "P4_DIAGNOSTIC";
-        } // 0 and 3 mean NO_ALARM or INVALID, so we use null
-
-        if(priority != null) {
-            updated = new Struct(updatedSchema);
-            updated.put("priority", priority);
-            updated.put("acknowledged", false);
-        }
-
-        return updated;
+        return newRecord(record, updatedValueSchema, updatedStruct);
     }
 
     /**
@@ -181,6 +231,10 @@ public abstract class EpicsToAlarm<R extends ConnectRecord<R>> implements Transf
         final SimpleConfig config = new SimpleConfig(CONFIG_DEF, configs);
     }
 
+    protected abstract Map<String, Object> doUpdate(Map<String, Object> original);
+
+    protected abstract Struct doUpdate(Struct original, Schema updatedSchema);
+
     protected abstract Schema operatingSchema(R record);
 
     protected abstract Object operatingValue(R record);
@@ -188,6 +242,42 @@ public abstract class EpicsToAlarm<R extends ConnectRecord<R>> implements Transf
     protected abstract R newRecord(R record, Schema updatedSchema, Object updatedValue);
 
     public static class Key<R extends ConnectRecord<R>> extends EpicsToAlarm<R> {
+
+        @Override
+        protected Map<String, Object> doUpdate(Map<String, Object> original) {
+            System.err.println("map doUpdate (key)!");
+
+            Map<String, Object> updated = new HashMap<>();
+
+            for(String key: original.keySet()) {
+                System.err.println("found key: " + key);
+            }
+
+            String name = (String)original.values().iterator().next();
+
+            System.err.println("name: " + name);
+
+            updated.put("name", name);
+            updated.put("type", "AlarmingEPICS");
+
+            return updated;
+        }
+
+        @Override
+        protected Struct doUpdate(Struct original, Schema updatedSchema) {
+            System.err.println("struct doUpdate (key)!");
+
+            Struct updated = new Struct(updatedSchema);
+
+            String name = original.toString();
+
+            System.err.println("name: " + name);
+
+            updated.put("name", name);
+            updated.put("type", "AlarmingEPICS");
+
+            return updated;
+        }
 
         @Override
         protected Schema operatingSchema(R record) {
@@ -207,6 +297,52 @@ public abstract class EpicsToAlarm<R extends ConnectRecord<R>> implements Transf
     }
 
     public static class Value<R extends ConnectRecord<R>> extends EpicsToAlarm<R> {
+
+        @Override
+        protected Map<String, Object> doUpdate(Map<String, Object> original) {
+            System.err.println("map doUpdate (value)!");
+
+            Map<String, Object> updated = new HashMap<>();
+            Map<String, Object> msg = new HashMap<>();
+            updated.put("msg", msg);
+
+            byte severity = (byte)original.get("severity");
+            byte status = (byte)original.get("status");
+
+            System.err.println("severity: " + severity);
+            System.err.println("status: " + status);
+
+            String sevrStr = SeverityEnum.fromOrdinal(severity).name();
+            String statStr = StatusEnum.fromOrdinal(status).name();
+
+            msg.put("sevr", sevrStr);
+            msg.put("stat", statStr);
+
+            return updated;
+        }
+
+        @Override
+        protected Struct doUpdate(Struct original, Schema updatedSchema) {
+            System.err.println("struct doUpdate (value)!");
+
+            Struct updated = new Struct(updatedSchema);
+            Struct msg = new Struct(alarmingEPICSSchema);
+            updated.put("msg", msg);
+
+            byte severity = original.getInt8("severity");
+            byte status = original.getInt8("status");
+
+            System.err.println("severity: " + severity);
+            System.err.println("status: " + status);
+
+            String sevrStr = SeverityEnum.fromOrdinal(severity).name();
+            String statStr = StatusEnum.fromOrdinal(status).name();
+
+            msg.put("sevr", sevrStr);
+            msg.put("stat", statStr);
+
+            return updated;
+        }
 
         @Override
         protected Schema operatingSchema(R record) {
