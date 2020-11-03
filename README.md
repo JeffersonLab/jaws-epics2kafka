@@ -1,7 +1,7 @@
 # kafka-transform-epics
 Kafka Connect Transform from [epics2kafka](https://github.com/JeffersonLab/epics2kafka) to the [kafka-alarm-system](https://github.com/JeffersonLab/kafka-alarm-system).
 
-The jar file is available on [Bintray](https://dl.bintray.com/slominskir/maven/org/jlab/kafka/connect/transform/jtransforms/) if you like to use maven artifiacts in your build.
+The jar file is available on [Bintray](https://dl.bintray.com/slominskir/maven/org/jlab/kafka/connect/transform/kafka-transform-epics/) if you like to use maven artifiacts in your build.
 
 ## Transformations
 
