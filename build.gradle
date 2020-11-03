@@ -4,7 +4,7 @@ plugins {
     id 'com.jfrog.bintray' version "1.8.5"
 }
 
-description "JLab Kafka Connect transforms"
+description "JLab Kafka Connect transform from epics2kafka to kafka-alarm-system"
 group 'org.jlab.kafka.connect.transform'
 version '0.12.0'
 
@@ -43,7 +43,7 @@ def pomConfig = {
     }
 
     scm {
-        url "https://github.com/JeffersonLab/jtransforms"
+        url "https://github.com/JeffersonLab/kafka-transform-epics"
     }
 }
 
@@ -52,12 +52,12 @@ publishing {
         ProjectPublication(MavenPublication) {
             from components.java
             groupId group
-            artifactId 'jtransforms'
+            artifactId project.name
             version version
             pom.withXml {
                 def root = asNode()
-                root.appendNode('description', 'JLab Kafka Connect transforms')
-                root.appendNode('name', 'jtransforms')
+                root.appendNode('description', project.description)
+                root.appendNode('name', project.name)
                 root.children().last() + pomConfig
             }
         }
@@ -72,9 +72,9 @@ bintray {
 
     pkg {
         repo = 'maven'
-        name = 'jtransforms'
+        name = project.name
         licenses = ['MIT']
-        vcsUrl = 'https://github.com/JeffersonLab/jtransforms.git'
+        vcsUrl = 'https://github.com/JeffersonLab/kafka-transform-epics.git'
         version {
             name = project.version
         }
