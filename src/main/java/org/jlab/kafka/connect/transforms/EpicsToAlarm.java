@@ -296,7 +296,6 @@ public abstract class EpicsToAlarm<R extends ConnectRecord<R>> implements Transf
 
         @Override
         protected R applyWithSchema(R record) {
-            System.err.println("applyWithSchema!");
             final Struct struct = requireStruct(operatingValue(record), PURPOSE);
 
             final Struct updatedStruct = doUpdate(struct, updatedValueSchema);
