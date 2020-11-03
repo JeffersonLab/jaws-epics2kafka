@@ -17,6 +17,12 @@ import java.util.Map;
 import static org.apache.kafka.connect.transforms.util.Requirements.requireMap;
 import static org.apache.kafka.connect.transforms.util.Requirements.requireStruct;
 
+/**
+ * Transforms records from epics2kafka to kafka-alarm-system format.  Special hints are provided to ensure AVRO messages
+ * honor enum and union types.
+ *
+ * @param <R> The Record to transform
+ */
 public abstract class EpicsToAlarm<R extends ConnectRecord<R>> implements Transformation<R> {
     public static final String OVERVIEW_DOC =
             "Transform epics2kafka messages to kafka-alarm-system format";
