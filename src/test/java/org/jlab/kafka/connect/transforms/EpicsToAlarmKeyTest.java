@@ -3,12 +3,9 @@ package org.jlab.kafka.connect.transforms;
 import org.apache.kafka.connect.data.Schema;
 import org.apache.kafka.connect.data.Struct;
 import org.apache.kafka.connect.source.SourceRecord;
-import org.jlab.kafka.connect.transforms.util.SeverityEnum;
-import org.jlab.kafka.connect.transforms.util.StatusEnum;
 import org.junit.After;
 import org.junit.Test;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
