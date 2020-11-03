@@ -320,7 +320,7 @@ public abstract class EpicsToAlarm<R extends ConnectRecord<R>> implements Transf
 
             Map<String, Object> updated = new HashMap<>();
             Map<String, Object> msg = new HashMap<>();
-            updated.put("msg", msg);
+            Map<String, Object> epicsMap = new HashMap<>();
 
             byte severity = (byte)original.get("severity");
             byte status = (byte)original.get("status");
@@ -331,8 +331,11 @@ public abstract class EpicsToAlarm<R extends ConnectRecord<R>> implements Transf
             String sevrStr = SeverityEnum.fromOrdinal(severity).name();
             String statStr = StatusEnum.fromOrdinal(status).name();
 
-            msg.put("sevr", sevrStr);
-            msg.put("stat", statStr);
+            epicsMap.put("sevr", sevrStr);
+            epicsMap.put("stat", statStr);
+
+            msg.put("AlarmingEPICS", epicsMap);
+            updated.put("msg", msg);
 
             return updated;
         }
