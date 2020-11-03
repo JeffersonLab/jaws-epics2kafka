@@ -184,8 +184,6 @@ public abstract class EpicsToAlarm<R extends ConnectRecord<R>> implements Transf
      */
     @Override
     public R apply(R record) {
-        System.err.println("apply!");
-        System.err.println("checking for null");
         if(operatingValue(record) == null) {
             return record; // tombstone value or null key
         } else if (operatingSchema(record) == null) {
@@ -234,7 +232,6 @@ public abstract class EpicsToAlarm<R extends ConnectRecord<R>> implements Transf
 
         @Override
         protected R applySchemaless(R record) {
-            System.err.println("applySchemaless! (key)");
             final String original = record.key().toString();
 
             final Map<String, Object> updatedMap = doUpdate(original);
@@ -244,10 +241,7 @@ public abstract class EpicsToAlarm<R extends ConnectRecord<R>> implements Transf
 
         @Override
         protected R applyWithSchema(R record) {
-            System.err.println("applyWithSchema! (key)");
             final String original = record.key().toString();
-
-            //Schema schema = operatingSchema(record);
 
             final Struct updatedStruct = doUpdate(original, updatedKeySchema);
 
@@ -255,11 +249,7 @@ public abstract class EpicsToAlarm<R extends ConnectRecord<R>> implements Transf
         }
 
         protected Map<String, Object> doUpdate(String original) {
-            System.err.println("map doUpdate (key)!");
-
             Map<String, Object> updated = new HashMap<>();
-
-            System.err.println("name: " + original);
 
             updated.put("name", original);
             updated.put("type", "AlarmingEPICS");
@@ -268,11 +258,7 @@ public abstract class EpicsToAlarm<R extends ConnectRecord<R>> implements Transf
         }
 
         protected Struct doUpdate(String original, Schema updatedSchema) {
-            System.err.println("struct doUpdate (key)!");
-
             Struct updated = new Struct(updatedSchema);
-
-            System.err.println("name: " + original);
 
             updated.put("name", original);
             updated.put("type", "AlarmingEPICS");
@@ -301,7 +287,6 @@ public abstract class EpicsToAlarm<R extends ConnectRecord<R>> implements Transf
 
         @Override
         protected R applySchemaless(R record) {
-            System.err.println("applySchemaless!");
             final Map<String, Object> map = requireMap(operatingValue(record), PURPOSE);
 
             final Map<String, Object> updatedMap = doUpdate(map);
@@ -314,25 +299,18 @@ public abstract class EpicsToAlarm<R extends ConnectRecord<R>> implements Transf
             System.err.println("applyWithSchema!");
             final Struct struct = requireStruct(operatingValue(record), PURPOSE);
 
-            //Schema schema = operatingSchema(record);
-
             final Struct updatedStruct = doUpdate(struct, updatedValueSchema);
 
             return newRecord(record, updatedValueSchema, updatedStruct);
         }
 
         protected Map<String, Object> doUpdate(Map<String, Object> original) {
-            System.err.println("map doUpdate (value)!");
-
             Map<String, Object> updated = new HashMap<>();
             Map<String, Object> msg = new HashMap<>();
             Map<String, Object> epicsMap = new HashMap<>();
 
             byte severity = (byte)original.get("severity");
             byte status = (byte)original.get("status");
-
-            System.err.println("severity: " + severity);
-            System.err.println("status: " + status);
 
             String sevrStr = SeverityEnum.fromOrdinal(severity).name();
             String statStr = StatusEnum.fromOrdinal(status).name();
@@ -347,17 +325,12 @@ public abstract class EpicsToAlarm<R extends ConnectRecord<R>> implements Transf
         }
 
         protected Struct doUpdate(Struct original, Schema updatedSchema) {
-            System.err.println("struct doUpdate (value)!");
-
             Struct updated = new Struct(updatedSchema);
             Struct msg = new Struct(msgSchema);
             Struct epicsStruct = new Struct(alarmingEPICSSchema);
 
             byte severity = original.getInt8("severity");
             byte status = original.getInt8("status");
-
-            System.err.println("severity: " + severity);
-            System.err.println("status: " + status);
 
             String sevrStr = SeverityEnum.fromOrdinal(severity).name();
             String statStr = StatusEnum.fromOrdinal(status).name();
