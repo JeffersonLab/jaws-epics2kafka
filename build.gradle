@@ -26,6 +26,13 @@ dependencies {
     testImplementation 'junit:junit:4.12'
 }
 
+test {
+    testLogging {
+        events "passed", "skipped", "failed"
+        exceptionFormat "full"
+    }
+}
+
 def pomConfig = {
     licenses {
         license {
