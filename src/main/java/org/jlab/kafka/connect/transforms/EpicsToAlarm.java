@@ -96,16 +96,14 @@ public abstract class EpicsToAlarm<R extends ConnectRecord<R>> implements Transf
             .struct()
             .optional()
             .name("org.jlab.kafka.alarms.Alarming")
-            .doc("Alarming state for a basic alarm")
-            .field("alarming", SchemaBuilder.bool().doc("true if the alarm is alarming, false otherwise").build())
+            .doc("Alarming state for a basic alarm, if record is present then alarming, if missing/tombstone then not.  There are no fields.")
             .build();
 
     final Schema ackSchema = SchemaBuilder
             .struct()
             .optional()
             .name("org.jlab.kafka.alarms.Ack")
-            .doc("A basic acknowledgment message")
-            .field("acknowledged", SchemaBuilder.bool().doc("true if the alarm is acknowledged, false otherwise").build())
+            .doc("A basic acknowledgment message, if record is present then acknowledged, if missing/tombstone then not.  There are no fields")
             .build();
 
     final Schema alarmingEPICSSchema = SchemaBuilder
