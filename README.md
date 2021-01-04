@@ -17,3 +17,4 @@ Alarm Name -> [active-alarms-key.avsc](https://github.com/JeffersonLab/kafka-ala
 ```
 gradlew build
 ```
+## Deploy
