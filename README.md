@@ -18,3 +18,15 @@ Alarm Name -> [active-alarms-key.avsc](https://github.com/JeffersonLab/kafka-ala
 gradlew build
 ```
 ## Deploy
+Copy the kafka-transform-epics.jar file into a subdirectory of the Kafka plugins directory.  For example:
+```
+mkdir /opt/kafka/plugins/alarm-transform
+cp kafka-transform-epics.jar /opt/kafka/plugins/alarm-transform
+```
+## Configure
+The Connect configuration (JSON):
+```
+    "transforms": "alarmsKey,alarmsValue",
+    "transforms.alarmsKey.type": "org.jlab.kafka.connect.transforms.EpicsToAlarm$Key",
+    "transforms.alarmsValue.type": "org.jlab.kafka.connect.transforms.EpicsToAlarm$Value
+```
