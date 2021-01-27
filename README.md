@@ -1,4 +1,4 @@
-# epics2kafka-alarms [![Java CI with Gradle](https://github.com/JeffersonLab/epics2kafka-alarms/workflows/Java%20CI%20with%20Gradle/badge.svg)](https://github.com/JeffersonLab/epics2kafka-alarms/actions?query=workflow%3A%22Java+CI+with+Gradle%22) [![Download](https://api.bintray.com/packages/slominskir/maven/epics2kafka-alarms/images/download.svg) ](https://bintray.com/slominskir/maven/epics2kafka-alarms)
+# epics2kafka-alarms [![Java CI with Gradle](https://github.com/JeffersonLab/epics2kafka-alarms/workflows/Java%20CI%20with%20Gradle/badge.svg)](https://github.com/JeffersonLab/epics2kafka-alarms/actions?query=workflow%3A%22Java+CI+with+Gradle%22) [![Download](https://api.bintray.com/packages/slominskir/maven/epics2kafka-alarms/images/download.svg) ](https://bintray.com/slominskir/maven/epics2kafka-alarms) [![Docker Image Version (latest semver)](https://img.shields.io/docker/v/slominskir/epics2kafka-alarms?sort=semver)   ](https://hub.docker.com/r/slominskir/epics2kafka-alarms)
 An extenstion to the [epics2kafka](https://github.com/JeffersonLab/epics2kafka) Kafka Connector that adds a [Transform](https://kafka.apache.org/documentation.html#connect_transforms) plugin to serialize messages in the format required by the [kafka-alarm-system](https://github.com/JeffersonLab/kafka-alarm-system).
 
 ---
@@ -7,6 +7,7 @@ An extenstion to the [epics2kafka](https://github.com/JeffersonLab/epics2kafka) 
 - [Build](https://github.com/JeffersonLab/kafka-alarm-system#build)
 - [Deploy](https://github.com/JeffersonLab/kafka-alarm-system#deploy)
 - [Configure](https://github.com/JeffersonLab/kafka-alarm-system#configure)
+- [Docker](https://github.com/JeffersonLab/kafka-alarm-system#docker)
 ---
 
 ## Overview
@@ -67,3 +68,8 @@ The Connect configuration (JSON):
     "transforms.alarmsKey.type": "org.jlab.kafka.connect.transforms.EpicsToAlarm$Key",
     "transforms.alarmsValue.type": "org.jlab.kafka.connect.transforms.EpicsToAlarm$Value
 ```
+## Docker
+```
+docker pull slominskir/epics2kafka-alarms
+```
+Image hosted on [DockerHub](https://hub.docker.com/r/slominskir/epics2kafka-alarms)
