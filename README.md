@@ -14,9 +14,16 @@ Alarm Name -> [active-alarms-key.avsc](https://github.com/JeffersonLab/kafka-ala
 [epics-monitor-event-value](https://github.com/JeffersonLab/epics2kafka/blob/master/src/main/java/org/jlab/kafka/connect/CASourceTask.java#L42-L54) -> [active-alarms-value.avsc](https://github.com/JeffersonLab/kafka-alarm-system/blob/master/schemas/active-alarms-value.avsc)
 
 ## Build
+This [Java 11](https://adoptopenjdk.net/) project uses the [Gradle 6](https://gradle.org/) build tool to automatically download dependencies and build the project from source:
+
 ```
+git clone https://github.com/JeffersonLab/kafka-transform-epics
+cd kafka-transform-epics
 gradlew build
 ```
+**Note**: If you do not already have Gradle installed, it will be installed automatically by the wrapper script included in the source
+
+**Note**: Jefferson Lab has an intercepting [proxy](https://gist.github.com/slominskir/92c25a033db93a90184a5994e71d0b78)
 ## Deploy
 Copy the kafka-transform-epics.jar file into a subdirectory of the Kafka plugins directory.  For example:
 ```
