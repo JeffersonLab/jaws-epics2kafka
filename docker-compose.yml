@@ -49,6 +49,18 @@ services:
       SCHEMA_REGISTRY_KAFKASTORE_BOOTSTRAP_SERVERS: kafka:9092
       SCHEMA_REGISTRY_HOST_NAME: registry
 
+  console:
+    image: slominskir/kafka-alarm-system:1.1.0
+    hostname: console
+    container_name: console
+    depends_on:
+      - zookeeper
+      - kafka
+      - registry
+    environment:
+      BOOTSTRAP_SERVERS: "kafka:9092"
+      SCHEMA_REGISTRY: "http://registry:8081"
+
   connect:
     build:
       context: .
@@ -70,5 +82,4 @@ services:
       STATUS_STORAGE_TOPIC: connect-status
       MONITOR_CHANNELS: "channel1|channel1|v,channel2|channel2|v,channel3|channel3|v"
     volumes:
-      - ./examples/connect-config/distributed-alarms:/config
-      - ./scripts:/scripts
+      - ./examples/connect-config:/config
