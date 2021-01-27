@@ -1,0 +1,7 @@
+---
+version: '3.8'
+
+services:
+  epics2kafka-alarms:
+    volumes:
+      - ./build/libs:/kafka/connect

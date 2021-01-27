@@ -61,14 +61,14 @@ services:
       BOOTSTRAP_SERVERS: "kafka:9092"
       SCHEMA_REGISTRY: "http://registry:8081"
 
-  connect:
+  epics2kafka-alarms:
     build:
       context: .
       dockerfile: Dockerfile
       args:
         - CUSTOM_CRT_URL=http://pki.jlab.org/JLabCA.crt
-    hostname: connect
-    container_name: connect
+    hostname: epics2kafka-alarms
+    container_name: epics2kafka-alarms
     depends_on:
       - zookeeper
       - kafka
@@ -80,6 +80,6 @@ services:
       CONFIG_STORAGE_TOPIC: connect-configs
       OFFSET_STORAGE_TOPIC: connect-offsets
       STATUS_STORAGE_TOPIC: connect-status
-      MONITOR_CHANNELS: "channel1|channel1|v,channel2|channel2|v,channel3|channel3|v"
+      MONITOR_CHANNELS: "channel1|active-alarms|v,channel2|active-alarms|v,channel3|active-alarms|v"
     volumes:
       - ./examples/connect-config:/config
