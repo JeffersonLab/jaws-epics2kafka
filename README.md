@@ -1,17 +1,45 @@
 # kafka-transform-epics [![Java CI with Gradle](https://github.com/JeffersonLab/kafka-transform-epics/workflows/Java%20CI%20with%20Gradle/badge.svg)](https://github.com/JeffersonLab/kafka-transform-epics/actions?query=workflow%3A%22Java+CI+with+Gradle%22) [![Download](https://api.bintray.com/packages/slominskir/maven/kafka-transform-epics/images/download.svg?version=0.15.0) ](https://bintray.com/slominskir/maven/kafka-transform-epics/0.15.0/link)
 Kafka Connect [Transform](https://kafka.apache.org/documentation.html#connect_transforms) message serialization format from [epics2kafka](https://github.com/JeffersonLab/epics2kafka) to the [kafka-alarm-system](https://github.com/JeffersonLab/kafka-alarm-system).
 
-The jar file is available on [Bintray](https://dl.bintray.com/slominskir/maven/org/jlab/kafka/connect/transform/kafka-transform-epics/) if you like to use maven artifiacts in your build.
+---
+- [Overview](https://github.com/JeffersonLab/kafka-alarm-system#overview)
+- [Quick Start with Compose](https://github.com/JeffersonLab/kafka-alarm-system#quick-start-with-compose)
+- [Build](https://github.com/JeffersonLab/kafka-alarm-system#build)
+- [Deploy](https://github.com/JeffersonLab/kafka-alarm-system#deploy)
+- [Configure](https://github.com/JeffersonLab/kafka-alarm-system#configure)
+---
 
-## Transformations
+## Overview
+The following transformations are performed:
+**Key**: Alarm Name -> [active-alarms-key.avsc](https://github.com/JeffersonLab/kafka-alarm-system/blob/master/schemas/active-alarms-key.avsc)
 
-### Key
-Alarm Name -> [active-alarms-key.avsc](https://github.com/JeffersonLab/kafka-alarm-system/blob/master/schemas/active-alarms-key.avsc)
+**Value**: [epics-monitor-event-value](https://github.com/JeffersonLab/epics2kafka/blob/master/src/main/java/org/jlab/kafka/connect/CASourceTask.java#L42-L54) -> [active-alarms-value.avsc](https://github.com/JeffersonLab/kafka-alarm-system/blob/master/schemas/active-alarms-value.avsc)
 
 **Note**: epics2kafka must be configured to use the optional _outkey_ field to ensure the alarm name is used as the key and not the channel name, which is the default.  The [registrations2epics](https://github.com/JeffersonLab/registrations2epics) app handles this.
 
-### Value
-[epics-monitor-event-value](https://github.com/JeffersonLab/epics2kafka/blob/master/src/main/java/org/jlab/kafka/connect/CASourceTask.java#L42-L54) -> [active-alarms-value.avsc](https://github.com/JeffersonLab/kafka-alarm-system/blob/master/schemas/active-alarms-value.avsc)
+## Quick Start with Compose 
+1. Grab project
+```
+git clone https://github.com/JeffersonLab/kafka-transform-epics
+cd kafka-transform-epics
+```
+2. Launch Docker
+```
+docker-compose up
+```
+3. Put a value into "channel1" EPICS channel
+```
+docker exec softioc caput channel1 1
+```
+4. Verify that the active-alarms topic received a properly formatted message 
+```
+docker exec connect /kafka/bin/kafka-console-consumer.sh --bootstrap-server kafka:9092 --topic epics-channels --from-beginning --property "print.key=true" --property "key.separator==" 
+```
+
+**Note**: When developing the app you can mount the build artifact into the container by substituting the `docker-compose up` command with:
+```
+docker-compose -f docker-compose.yml -f docker-compose-dev.yml up
+```
 
 ## Build
 This [Java 11](https://adoptopenjdk.net/) project uses the [Gradle 6](https://gradle.org/) build tool to automatically download dependencies and build the project from source:
@@ -30,6 +58,7 @@ Copy the kafka-transform-epics.jar file into a subdirectory of the Kafka plugins
 mkdir /opt/kafka/plugins/alarm-transform
 cp kafka-transform-epics.jar /opt/kafka/plugins/alarm-transform
 ```
+**Note**: The jar file is available on [Bintray](https://dl.bintray.com/slominskir/maven/org/jlab/kafka/connect/transform/kafka-transform-epics/).
 ## Configure
 The Connect configuration (JSON):
 ```
