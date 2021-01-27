@@ -47,8 +47,8 @@ docker-compose -f docker-compose.yml -f docker-compose-dev.yml up
 This [Java 11](https://adoptopenjdk.net/) project uses the [Gradle 6](https://gradle.org/) build tool to automatically download dependencies and build the project from source:
 
 ```
-git clone https://github.com/JeffersonLab/kafka-transform-epics
-cd kafka-transform-epics
+git clone https://github.com/JeffersonLab/epics2kafka-alarms
+cd epics2kafka-alarms
 gradlew build
 ```
 **Note**: If you do not already have Gradle installed, it will be installed automatically by the wrapper script included in the source
