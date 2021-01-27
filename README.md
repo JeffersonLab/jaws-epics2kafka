@@ -28,13 +28,13 @@ cd kafka-transform-epics
 ```
 docker-compose up
 ```
-3. Put a value into "channel1" EPICS channel
+3. Trip an alarm
 ```
 docker exec softioc caput channel1 1
 ```
 4. Verify that the active-alarms topic received a properly formatted message 
 ```
-docker exec connect /kafka/bin/kafka-console-consumer.sh --bootstrap-server kafka:9092 --topic epics-channels --from-beginning --property "print.key=true" --property "key.separator==" 
+docker exec -it console /scripts/list-active.py
 ```
 
 **Note**: When developing the app you can mount the build artifact into the container by substituting the `docker-compose up` command with:
