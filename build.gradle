@@ -50,7 +50,7 @@ def pomConfig = {
     }
 
     scm {
-        url "https://github.com/JeffersonLab/kafka-transform-epics"
+        url "https://github.com/JeffersonLab/epics2kafka-alarms"
     }
 }
 
@@ -81,7 +81,7 @@ bintray {
         repo = 'maven'
         name = project.name
         licenses = ['MIT']
-        vcsUrl = 'https://github.com/JeffersonLab/kafka-transform-epics.git'
+        vcsUrl = 'https://github.com/JeffersonLab/epics2kafka-alarms.git'
         version {
             name = project.version
         }

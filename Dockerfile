@@ -5,8 +5,8 @@ ARG CUSTOM_CRT_URL
 USER root
 
 RUN cd /tmp \
-   && git clone https://github.com/JeffersonLab/kafka-transform-epics \
-   && cd kafka-transform-epics \
+   && git clone https://github.com/JeffersonLab/epics2kafka-alarms \
+   && cd epics2kafka-alarms \
     && if [ -z "$CUSTOM_CRT_URL" ] ; then echo "No custom cert needed"; else \
         wget -O /usr/local/share/ca-certificates/customcert.crt $CUSTOM_CRT_URL \
         && update-ca-certificates \
@@ -17,4 +17,4 @@ RUN cd /tmp \
 
 FROM slominskir/epics2kafka:0.10.0
 
-COPY --from=builder /tmp/kafka-transform-epics/build/libs $KAFKA_CONNECT_PLUGINS_DIR/kafka-transform-epics
+COPY --from=builder /tmp/epics2kafka-alarms/build/libs $KAFKA_CONNECT_PLUGINS_DIR/epics2kafka-alarms

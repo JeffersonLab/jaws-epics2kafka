@@ -1,4 +1,4 @@
-# epics2kafka-alarms [![Java CI with Gradle](https://github.com/JeffersonLab/kafka-transform-epics/workflows/Java%20CI%20with%20Gradle/badge.svg)](https://github.com/JeffersonLab/kafka-transform-epics/actions?query=workflow%3A%22Java+CI+with+Gradle%22) [![Download](https://api.bintray.com/packages/slominskir/maven/kafka-transform-epics/images/download.svg) ](https://bintray.com/slominskir/maven/kafka-transform-epics)
+# epics2kafka-alarms [![Java CI with Gradle](https://github.com/JeffersonLab/epics2kafka-alarms/workflows/Java%20CI%20with%20Gradle/badge.svg)](https://github.com/JeffersonLab/epics2kafka-alarms/actions?query=workflow%3A%22Java+CI+with+Gradle%22) [![Download](https://api.bintray.com/packages/slominskir/maven/kafka-transform-epics/images/download.svg) ](https://bintray.com/slominskir/maven/kafka-transform-epics)
 An extenstion to the [epics2kafka](https://github.com/JeffersonLab/epics2kafka) Kafka Connector that adds a [Transform](https://kafka.apache.org/documentation.html#connect_transforms) plugin to serialize messages in the format required by the [kafka-alarm-system](https://github.com/JeffersonLab/kafka-alarm-system).
 
 ---
@@ -54,12 +54,12 @@ gradlew build
 
 **Note**: Jefferson Lab has an intercepting [proxy](https://gist.github.com/slominskir/92c25a033db93a90184a5994e71d0b78)
 ## Deploy
-Copy the kafka-transform-epics.jar file into a subdirectory of the Kafka plugins directory.  For example:
+Copy the epics2kafka-alarms.jar file into a subdirectory of the Kafka plugins directory.  For example:
 ```
-mkdir /opt/kafka/plugins/kafka-transform-epics
-cp kafka-transform-epics.jar /opt/kafka/plugins/kafka-transform-epics
+mkdir /opt/kafka/plugins/epics2kafka-alarms
+cp epics2kafka-alarms.jar /opt/kafka/plugins/epics2kafka-alarms
 ```
-**Note**: The jar file is available on [Bintray](https://dl.bintray.com/slominskir/maven/org/jlab/kafka/connect/transform/kafka-transform-epics/).
+**Note**: The jar file is available on [Bintray](https://dl.bintray.com/slominskir/maven/org/jlab/kafka/connect/transform/epics2kafka-alarms/).
 ## Configure
 The Connect configuration (JSON):
 ```
