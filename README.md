@@ -1,5 +1,5 @@
-# kafka-transform-epics [![Java CI with Gradle](https://github.com/JeffersonLab/kafka-transform-epics/workflows/Java%20CI%20with%20Gradle/badge.svg)](https://github.com/JeffersonLab/kafka-transform-epics/actions?query=workflow%3A%22Java+CI+with+Gradle%22) [![Download](https://api.bintray.com/packages/slominskir/maven/kafka-transform-epics/images/download.svg) ](https://bintray.com/slominskir/maven/kafka-transform-epics)
-A Kafka Connect [Transform](https://kafka.apache.org/documentation.html#connect_transforms) plugin for [epics2kafka](https://github.com/JeffersonLab/epics2kafka) to serialize messages in the format required by the [kafka-alarm-system](https://github.com/JeffersonLab/kafka-alarm-system).
+# epics2kafka-alarms [![Java CI with Gradle](https://github.com/JeffersonLab/kafka-transform-epics/workflows/Java%20CI%20with%20Gradle/badge.svg)](https://github.com/JeffersonLab/kafka-transform-epics/actions?query=workflow%3A%22Java+CI+with+Gradle%22) [![Download](https://api.bintray.com/packages/slominskir/maven/kafka-transform-epics/images/download.svg) ](https://bintray.com/slominskir/maven/kafka-transform-epics)
+An extenstion to the [epics2kafka](https://github.com/JeffersonLab/epics2kafka) Kafka Connector that adds a [Transform](https://kafka.apache.org/documentation.html#connect_transforms) plugin to serialize messages in the format required by the [kafka-alarm-system](https://github.com/JeffersonLab/kafka-alarm-system).
 
 ---
 - [Overview](https://github.com/JeffersonLab/kafka-alarm-system#overview)
