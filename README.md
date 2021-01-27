@@ -22,8 +22,8 @@ The following transformations are performed:
 ## Quick Start with Compose 
 1. Grab project
 ```
-git clone https://github.com/JeffersonLab/kafka-transform-epics
-cd kafka-transform-epics
+git clone https://github.com/JeffersonLab/epics2kafka-alarms
+cd epics2kafka-alarms
 ```
 2. Launch Docker
 ```
