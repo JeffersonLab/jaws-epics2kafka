@@ -56,8 +56,8 @@ gradlew build
 ## Deploy
 Copy the kafka-transform-epics.jar file into a subdirectory of the Kafka plugins directory.  For example:
 ```
-mkdir /opt/kafka/plugins/alarm-transform
-cp kafka-transform-epics.jar /opt/kafka/plugins/alarm-transform
+mkdir /opt/kafka/plugins/kafka-transform-epics
+cp kafka-transform-epics.jar /opt/kafka/plugins/kafka-transform-epics
 ```
 **Note**: The jar file is available on [Bintray](https://dl.bintray.com/slominskir/maven/org/jlab/kafka/connect/transform/kafka-transform-epics/).
 ## Configure

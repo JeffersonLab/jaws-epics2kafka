@@ -17,4 +17,4 @@ RUN cd /tmp \
 
 FROM slominskir/epics2kafka:0.10.0
 
-COPY --from=builder /tmp/kafka-transform-epics/build/libs $KAFKA_CONNECT_PLUGINS_DIR
+COPY --from=builder /tmp/kafka-transform-epics/build/libs $KAFKA_CONNECT_PLUGINS_DIR/kafka-transform-epics
