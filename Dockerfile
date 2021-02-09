@@ -15,6 +15,6 @@ RUN cd /tmp \
         ; fi \
     && gradle build $OPTIONAL_CERT_ARG
 
-FROM slominskir/epics2kafka:0.10.0
+FROM slominskir/epics2kafka:1.1.0
 
 COPY --from=builder /tmp/epics2kafka-alarms/build/libs $KAFKA_CONNECT_PLUGINS_DIR/epics2kafka-alarms
