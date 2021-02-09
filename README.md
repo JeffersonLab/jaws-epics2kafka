@@ -35,7 +35,7 @@ docker exec softioc caput channel1 1
 ```
 4. Verify that the active-alarms topic received a properly formatted message 
 ```
-docker exec -it console /scripts/list-active.py
+docker exec -it console /scripts/client/list-active.py
 ```
 
 **Note**: When developing the app you can mount the build artifact into the container by substituting the `docker-compose up` command with:
