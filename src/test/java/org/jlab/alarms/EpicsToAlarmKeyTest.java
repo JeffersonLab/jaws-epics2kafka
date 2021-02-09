@@ -1,4 +1,4 @@
-package org.jlab.kafka.connect.transforms;
+package org.jlab.alarms;
 
 import org.apache.kafka.connect.data.Schema;
 import org.apache.kafka.connect.data.Struct;

@@ -1,4 +1,4 @@
-package org.jlab.kafka.connect.transforms.util;
+package org.jlab.alarms.util;
 
 public enum StatusEnum {
     // WARNING: order is important here

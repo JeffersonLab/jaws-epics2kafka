@@ -1,4 +1,4 @@
-package org.jlab.kafka.connect.transforms;
+package org.jlab.alarms;
 
 import org.apache.kafka.common.config.ConfigDef;
 import org.apache.kafka.connect.connector.ConnectRecord;
@@ -6,8 +6,8 @@ import org.apache.kafka.connect.data.*;
 import org.apache.kafka.connect.header.ConnectHeaders;
 import org.apache.kafka.connect.transforms.Transformation;
 import org.apache.kafka.connect.transforms.util.SimpleConfig;
-import org.jlab.kafka.connect.transforms.util.SeverityEnum;
-import org.jlab.kafka.connect.transforms.util.StatusEnum;
+import org.jlab.alarms.util.SeverityEnum;
+import org.jlab.alarms.util.StatusEnum;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;

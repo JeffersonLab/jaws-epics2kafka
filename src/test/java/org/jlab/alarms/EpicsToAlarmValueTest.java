@@ -1,11 +1,11 @@
-package org.jlab.kafka.connect.transforms;
+package org.jlab.alarms;
 
 import org.apache.kafka.connect.data.Schema;
 import org.apache.kafka.connect.data.SchemaBuilder;
 import org.apache.kafka.connect.data.Struct;
 import org.apache.kafka.connect.source.SourceRecord;
-import org.jlab.kafka.connect.transforms.util.SeverityEnum;
-import org.jlab.kafka.connect.transforms.util.StatusEnum;
+import org.jlab.alarms.util.SeverityEnum;
+import org.jlab.alarms.util.StatusEnum;
 import org.junit.After;
 import org.junit.Test;
 
