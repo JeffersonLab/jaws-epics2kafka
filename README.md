@@ -65,8 +65,8 @@ cp epics2kafka-alarms.jar /opt/kafka/plugins/epics2kafka-alarms
 The Connect configuration (JSON):
 ```
     "transforms": "alarmsKey,alarmsValue",
-    "transforms.alarmsKey.type": "org.jlab.kafka.connect.transforms.EpicsToAlarm$Key",
-    "transforms.alarmsValue.type": "org.jlab.kafka.connect.transforms.EpicsToAlarm$Value
+    "transforms.alarmsKey.type": "org.jlab.alarms.EpicsToAlarm$Key",
+    "transforms.alarmsValue.type": "org.jlab.alarms.EpicsToAlarm$Value
 ```
 ## Docker
 A Docker container with both epics2kafka and the epics2kafka-alarms transform installed:
