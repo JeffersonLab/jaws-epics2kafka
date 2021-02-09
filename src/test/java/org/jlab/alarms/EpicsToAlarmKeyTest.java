@@ -56,7 +56,7 @@ public class EpicsToAlarmKeyTest {
         Map transformedKey = (Map)transformed.key();
 
         assertEquals(key, transformedKey.get("name"));
-        assertEquals("AlarmingEPICS", transformedKey.get("type"));
+        assertEquals("EPICSAlarming", transformedKey.get("type"));
     }
 
     @Test
@@ -69,6 +69,6 @@ public class EpicsToAlarmKeyTest {
         Struct transformedKey = (Struct)transformed.key();
 
         assertEquals(key, transformedKey.getString("name"));
-        assertEquals("AlarmingEPICS", transformedKey.getString("type"));
+        assertEquals("EPICSAlarming", transformedKey.getString("type"));
     }
 }

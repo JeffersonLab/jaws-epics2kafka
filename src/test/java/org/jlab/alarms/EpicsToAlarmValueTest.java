@@ -74,8 +74,8 @@ public class EpicsToAlarmValueTest {
 
         Map msg = (Map)transformedValue.get("msg");
 
-        assertEquals(SeverityEnum.fromOrdinal((byte)2).name(), ((Map)msg.get("AlarmingEPICS")).get("sevr"));
-        assertEquals(StatusEnum.fromOrdinal((byte)3).name(), ((Map)msg.get("AlarmingEPICS")).get("stat"));
+        assertEquals(SeverityEnum.fromOrdinal((byte)2).name(), ((Map)msg.get("EPICSAlarming")).get("sevr"));
+        assertEquals(StatusEnum.fromOrdinal((byte)3).name(), ((Map)msg.get("EPICSAlarming")).get("stat"));
     }
 
     @Test
@@ -92,7 +92,7 @@ public class EpicsToAlarmValueTest {
 
         Struct msg = transformedValue.getStruct("msg");
 
-        assertEquals(SeverityEnum.fromOrdinal((byte)2).name(), msg.getStruct("AlarmingEPICS").getString("sevr"));
-        assertEquals(StatusEnum.fromOrdinal((byte)3).name(), msg.getStruct("AlarmingEPICS").getString("stat"));
+        assertEquals(SeverityEnum.fromOrdinal((byte)2).name(), msg.getStruct("EPICSAlarming").getString("sevr"));
+        assertEquals(StatusEnum.fromOrdinal((byte)3).name(), msg.getStruct("EPICSAlarming").getString("stat"));
     }
 }
