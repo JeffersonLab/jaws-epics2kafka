@@ -5,7 +5,7 @@ plugins {
 }
 
 description "JLab Kafka Connect transform from epics2kafka to kafka-alarm-system"
-group 'org.jlab.kafka.connect.transform'
+group 'org.jlab.alarms'
 version '1.0.0'
 
 sourceCompatibility = 1.8
