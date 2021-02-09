@@ -35,7 +35,7 @@ public abstract class EpicsToAlarm<R extends ConnectRecord<R>> implements Transf
             .string()
             .doc("Alarming state (EPICS .SEVR field)")
             .parameter("io.confluent.connect.avro.enum.doc.SevrEnum", "Enumeration of possible EPICS .SEVR values")
-            .parameter("io.confluent.connect.avro.Enum", "org.jlab.kafka.alarms.SevrEnum")
+            .parameter("io.confluent.connect.avro.Enum", "org.jlab.alarms.SevrEnum")
             .parameter("io.confluent.connect.avro.Enum.1", "NO_ALARM")
             .parameter("io.confluent.connect.avro.Enum.2", "MINOR")
             .parameter("io.confluent.connect.avro.Enum.3", "MAJOR")
@@ -46,7 +46,7 @@ public abstract class EpicsToAlarm<R extends ConnectRecord<R>> implements Transf
             .string()
             .doc("Alarming status (EPICS .STAT field)")
             .parameter("io.confluent.connect.avro.enum.doc.StatEnum", "Enumeration of possible EPICS .STAT values")
-            .parameter("io.confluent.connect.avro.Enum", "org.jlab.kafka.alarms.StatEnum")
+            .parameter("io.confluent.connect.avro.Enum", "org.jlab.alarms.StatEnum")
             .parameter("io.confluent.connect.avro.Enum.1", "NO_ALARM")
             .parameter("io.confluent.connect.avro.Enum.2", "READ")
             .parameter("io.confluent.connect.avro.Enum.3", "WRITE")
@@ -75,7 +75,7 @@ public abstract class EpicsToAlarm<R extends ConnectRecord<R>> implements Transf
             .string()
             .doc("Indicates whether this alarm has been explicitly acknowledged - useful for latching alarms which can only be cleared after acknowledgement")
             .parameter("io.confluent.connect.avro.enum.doc.EPICSAcknowledgementEnum", "Enumeration of possible EPICS acknowledgement states")
-            .parameter("io.confluent.connect.avro.Enum", "org.jlab.kafka.alarms.EPICSAcknowledgementEnum")
+            .parameter("io.confluent.connect.avro.Enum", "org.jlab.alarms.EPICSAcknowledgementEnum")
             .parameter("io.confluent.connect.avro.Enum.1", "NO_ACK")
             .parameter("io.confluent.connect.avro.Enum.2", "MINOR_ACK")
             .parameter("io.confluent.connect.avro.Enum.3", "MAJOR_ACK")
@@ -85,31 +85,31 @@ public abstract class EpicsToAlarm<R extends ConnectRecord<R>> implements Transf
             .string()
             .doc("The type of message included in the value - required as part of the key to ensure compaction keeps the latest message of each type")
             .parameter("io.confluent.connect.avro.enum.doc.ActiveMessageType", "Enumeration of possible message types")
-            .parameter("io.confluent.connect.avro.Enum", "org.jlab.kafka.alarms.ActiveMessageType")
-            .parameter("io.confluent.connect.avro.Enum.1", "Alarming")
-            .parameter("io.confluent.connect.avro.Enum.2", "Ack")
-            .parameter("io.confluent.connect.avro.Enum.3", "AlarmingEPICS")
-            .parameter("io.confluent.connect.avro.Enum.4", "AckEPICS")
+            .parameter("io.confluent.connect.avro.Enum", "org.jlab.alarms.ActiveMessageType")
+            .parameter("io.confluent.connect.avro.Enum.1", "SimpleAlarming")
+            .parameter("io.confluent.connect.avro.Enum.2", "SimpleAck")
+            .parameter("io.confluent.connect.avro.Enum.3", "EPICSAlarming")
+            .parameter("io.confluent.connect.avro.Enum.4", "EPICSAck")
             .build();
 
     final Schema alarmingSchema = SchemaBuilder
             .struct()
             .optional()
-            .name("org.jlab.kafka.alarms.Alarming")
-            .doc("Alarming state for a basic alarm, if record is present then alarming, if missing/tombstone then not.  There are no fields.")
+            .name("org.jlab.alarms.SimpleAlarming")
+            .doc("Alarming state for a simple alarm, if record is present then alarming, if missing/tombstone then not.  There are no fields.")
             .build();
 
     final Schema ackSchema = SchemaBuilder
             .struct()
             .optional()
-            .name("org.jlab.kafka.alarms.Ack")
-            .doc("A basic acknowledgment message, if record is present then acknowledged, if missing/tombstone then not.  There are no fields")
+            .name("org.jlab.alarms.SimpleAck")
+            .doc("A simple acknowledgment message, if record is present then acknowledged, if missing/tombstone then not.  There are no fields")
             .build();
 
     final Schema alarmingEPICSSchema = SchemaBuilder
             .struct()
             .optional()
-            .name("org.jlab.kafka.alarms.AlarmingEPICS")
+            .name("org.jlab.alarms.EPICSAlarming")
             .doc("EPICS alarming state")
             .field("sevr", sevrSchema)
             .field("stat", statSchema)
@@ -118,7 +118,7 @@ public abstract class EpicsToAlarm<R extends ConnectRecord<R>> implements Transf
     final Schema ackEPICSSchema = SchemaBuilder
             .struct()
             .optional()
-            .name("org.jlab.kafka.alarms.AckEPICS")
+            .name("org.jlab.alarms.EPICSAck")
             .doc("EPICS acknowledgement state")
             .field("ack", ackEnumSchema)
             .build();
@@ -127,15 +127,15 @@ public abstract class EpicsToAlarm<R extends ConnectRecord<R>> implements Transf
             .struct()
             .name("io.confluent.connect.avro.Union")
             .doc("Two types of messages are allowed: Alarming and Acknowledgement; There can be multiple flavors of each type for different alarm producers; modeled as a nested union to avoid complications of union at root of schema.")
-            .field("Alarming", alarmingSchema)
-            .field("Ack", ackSchema)
-            .field("AlarmingEPICS", alarmingEPICSSchema)
-            .field("AckEPICS", ackEPICSSchema)
+            .field("SimpleAlarming", alarmingSchema)
+            .field("SimpleAck", ackSchema)
+            .field("EPICSAlarming", alarmingEPICSSchema)
+            .field("EPICSAck", ackEPICSSchema)
             .build();
 
     final Schema updatedValueSchema = SchemaBuilder
             .struct()
-            .name("org.jlab.kafka.alarms.ActiveAlarmValue")
+            .name("org.jlab.alarms.ActiveAlarmValue")
             .doc("Alarming and Acknowledgements state")
             .version(1)
             .field("msg", msgSchema)
@@ -143,7 +143,7 @@ public abstract class EpicsToAlarm<R extends ConnectRecord<R>> implements Transf
 
     final Schema updatedKeySchema = SchemaBuilder
             .struct()
-            .name("org.jlab.kafka.alarms.ActiveAlarmKey")
+            .name("org.jlab.alarms.ActiveAlarmKey")
             .doc("Active alarms state (alarming or acknowledgment)")
             .version(1)
             .field("name", SchemaBuilder.string().doc("The unique name of the alarm").build())
@@ -169,7 +169,7 @@ public abstract class EpicsToAlarm<R extends ConnectRecord<R>> implements Transf
 
         headers.addString("user", user);
         headers.addString("host", hostname);
-        headers.addString("producer", "epics2alarms");
+        headers.addString("producer", "epics2kafka-alarms");
     }
 
     /**
@@ -250,7 +250,7 @@ public abstract class EpicsToAlarm<R extends ConnectRecord<R>> implements Transf
             Map<String, Object> updated = new HashMap<>();
 
             updated.put("name", original);
-            updated.put("type", "AlarmingEPICS");
+            updated.put("type", "EPICSAlarming");
 
             return updated;
         }
@@ -259,7 +259,7 @@ public abstract class EpicsToAlarm<R extends ConnectRecord<R>> implements Transf
             Struct updated = new Struct(updatedSchema);
 
             updated.put("name", original);
-            updated.put("type", "AlarmingEPICS");
+            updated.put("type", "EPICSAlarming");
 
             return updated;
         }
@@ -315,7 +315,7 @@ public abstract class EpicsToAlarm<R extends ConnectRecord<R>> implements Transf
             epicsMap.put("sevr", sevrStr);
             epicsMap.put("stat", statStr);
 
-            msg.put("AlarmingEPICS", epicsMap);
+            msg.put("EPICSAlarming", epicsMap);
             updated.put("msg", msg);
 
             return updated;
@@ -335,7 +335,7 @@ public abstract class EpicsToAlarm<R extends ConnectRecord<R>> implements Transf
             epicsStruct.put("sevr", sevrStr);
             epicsStruct.put("stat", statStr);
 
-            msg.put("AlarmingEPICS", epicsStruct);
+            msg.put("EPICSAlarming", epicsStruct);
             updated.put("msg", msg);
 
             return updated;
