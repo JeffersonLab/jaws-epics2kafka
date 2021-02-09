@@ -80,6 +80,6 @@ services:
       CONFIG_STORAGE_TOPIC: connect-configs
       OFFSET_STORAGE_TOPIC: connect-offsets
       STATUS_STORAGE_TOPIC: connect-status
-      MONITOR_CHANNELS: "channel1|active-alarms|v,channel2|active-alarms|v,channel3|active-alarms|v"
+      MONITOR_CHANNELS: "channel1|active-alarms|a|alarm1,channel2|active-alarms|a|alarm2,channel3|active-alarms|a|alarm3"
     volumes:
       - ./examples/connect-config:/config
