@@ -129,6 +129,8 @@ public abstract class EpicsToAlarm<R extends ConnectRecord<R>> implements Transf
             .optional()
             .name("org.jlab.alarms.EPICSAck")
             .doc("EPICS acknowledgement state")
+            .parameter("io.confluent.connect.avro.record.doc", "EPICS acknowledgement state")
+            .parameter("io.confluent.connect.avro.field.doc.ack","Indicates whether this alarm has been explicitly acknowledged - useful for latching alarms which can only be cleared after acknowledgement")
             .field("ack", ackEnumSchema)
             .build();
 
