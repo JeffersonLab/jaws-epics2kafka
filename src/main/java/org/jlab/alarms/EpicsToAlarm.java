@@ -146,6 +146,8 @@ public abstract class EpicsToAlarm<R extends ConnectRecord<R>> implements Transf
             .name("org.jlab.alarms.ActiveAlarmKey")
             .doc("Active alarms state (alarming or acknowledgment)")
             .parameter("io.confluent.connect.avro.record.doc", "Active alarms state (alarming or acknowledgment)")
+            .parameter("io.confluent.connect.avro.field.doc.name", "The unique name of the alarm")
+            .parameter("io.confluent.connect.avro.field.doc.type", "The type of message included in the value - required as part of the key to ensure compaction keeps the latest message of each type")
             .version(1)
             .field("name", SchemaBuilder.string().doc("The unique name of the alarm").build())
             .field("type", typeSchema)
