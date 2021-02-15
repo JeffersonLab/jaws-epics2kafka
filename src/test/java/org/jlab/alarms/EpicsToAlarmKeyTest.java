@@ -85,8 +85,21 @@ public class EpicsToAlarmKeyTest {
 
         org.apache.kafka.connect.data.Schema connectSchema = EpicsToAlarm.updatedKeySchema;
 
-        org.apache.avro.Schema avroSchema = avroData.fromConnectSchema(connectSchema);
+        org.apache.avro.Schema actualAvroSchema = avroData.fromConnectSchema(connectSchema);
 
-        System.out.println(avroSchema);
+        org.apache.avro.Schema expectedAvroSchema = org.apache.avro.SchemaBuilder
+                .builder()
+                .record("org.jlab.alarms.ActiveAlarmKey")
+                .doc("Active alarms state (alarming or acknowledgment)")
+                .fields()
+                .name("name").doc("The unique name of the alarm").type().stringType().noDefault()
+                .name("type").doc("The type of message included in the value - required as part of the key to ensure compaction keeps the latest message of each type").type().enumeration("ActiveMessageType").namespace("org.jlab.alarms").doc("Enumeration of possible message types").symbols("SimpleAlarming", "SimpleAck", "EPICSAlarming", "EPICSAck").noDefault()
+                .endRecord();
+
+        //System.out.println("Actual:   " + actualAvroSchema);
+        //System.out.println("Expected: " + expectedAvroSchema);
+
+        // Schema objects weirdly say they're equal even if doc fields are wrong so we use string comparison
+        assertEquals(expectedAvroSchema.toString(), actualAvroSchema.toString());
     }
 }
