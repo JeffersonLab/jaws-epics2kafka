@@ -33,6 +33,7 @@ public abstract class EpicsToAlarm<R extends ConnectRecord<R>> implements Transf
 
     static final Schema sevrSchema = SchemaBuilder
             .string()
+            .name("org.jlab.alarms.SevrEnum")
             .doc("Alarming state (EPICS .SEVR field)")
             .parameter("io.confluent.connect.avro.enum.doc.SevrEnum", "Enumeration of possible EPICS .SEVR values")
             .parameter("io.confluent.connect.avro.Enum", "org.jlab.alarms.SevrEnum")
@@ -44,6 +45,7 @@ public abstract class EpicsToAlarm<R extends ConnectRecord<R>> implements Transf
 
     static final Schema statSchema = SchemaBuilder
             .string()
+            .name("org.jlab.alarms.StatEnum")
             .doc("Alarming status (EPICS .STAT field)")
             .parameter("io.confluent.connect.avro.enum.doc.StatEnum", "Enumeration of possible EPICS .STAT values")
             .parameter("io.confluent.connect.avro.Enum", "org.jlab.alarms.StatEnum")
@@ -73,6 +75,7 @@ public abstract class EpicsToAlarm<R extends ConnectRecord<R>> implements Transf
 
     static final Schema ackEnumSchema = SchemaBuilder
             .string()
+            .name("org.jlab.alarms.EPICSAcknowledgementEnum")
             .doc("Indicates whether this alarm has been explicitly acknowledged - useful for latching alarms which can only be cleared after acknowledgement")
             .parameter("io.confluent.connect.avro.enum.doc.EPICSAcknowledgementEnum", "Enumeration of possible EPICS acknowledgement states")
             .parameter("io.confluent.connect.avro.Enum", "org.jlab.alarms.EPICSAcknowledgementEnum")
@@ -98,6 +101,7 @@ public abstract class EpicsToAlarm<R extends ConnectRecord<R>> implements Transf
             .optional()
             .name("org.jlab.alarms.SimpleAlarming")
             .doc("Alarming state for a simple alarm, if record is present then alarming, if missing/tombstone then not.  There are no fields.")
+            .parameter("io.confluent.connect.avro.record.doc", "Alarming state for a simple alarm, if record is present then alarming, if missing/tombstone then not.  There are no fields.")
             .build();
 
     static final Schema ackSchema = SchemaBuilder
@@ -105,6 +109,7 @@ public abstract class EpicsToAlarm<R extends ConnectRecord<R>> implements Transf
             .optional()
             .name("org.jlab.alarms.SimpleAck")
             .doc("A simple acknowledgment message, if record is present then acknowledged, if missing/tombstone then not.  There are no fields")
+            .parameter("io.confluent.connect.avro.record.doc", "A simple acknowledgment message, if record is present then acknowledged, if missing/tombstone then not.  There are no fields")
             .build();
 
     static final Schema alarmingEPICSSchema = SchemaBuilder
@@ -112,6 +117,9 @@ public abstract class EpicsToAlarm<R extends ConnectRecord<R>> implements Transf
             .optional()
             .name("org.jlab.alarms.EPICSAlarming")
             .doc("EPICS alarming state")
+            .parameter("io.confluent.connect.avro.record.doc", "EPICS alarming state")
+            .parameter("io.confluent.connect.avro.field.doc.sevr","Alarming state (EPICS .SEVR field)")
+            .parameter("io.confluent.connect.avro.field.doc.stat","Alarming status (EPICS .STAT field)")
             .field("sevr", sevrSchema)
             .field("stat", statSchema)
             .build();
@@ -138,6 +146,8 @@ public abstract class EpicsToAlarm<R extends ConnectRecord<R>> implements Transf
             .struct()
             .name("org.jlab.alarms.ActiveAlarmValue")
             .doc("Alarming and Acknowledgements state")
+            .parameter("io.confluent.connect.avro.record.doc", "Alarming and Acknowledgements state")
+            .parameter("io.confluent.connect.avro.field.doc.msg","Two types of messages are allowed: Alarming and Acknowledgement; There can be multiple flavors of each type for different alarm producers; modeled as a nested union to avoid complications of union at root of schema.")
             .version(1)
             .field("msg", msgSchema)
             .build();
