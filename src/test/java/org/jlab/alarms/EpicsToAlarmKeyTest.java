@@ -96,8 +96,8 @@ public class EpicsToAlarmKeyTest {
                 .name("type").doc("The type of message included in the value - required as part of the key to ensure compaction keeps the latest message of each type").type().enumeration("ActiveMessageType").namespace("org.jlab.alarms").doc("Enumeration of possible message types").symbols("SimpleAlarming", "SimpleAck", "EPICSAlarming", "EPICSAck").noDefault()
                 .endRecord();
 
-        //System.out.println("Actual:   " + actualAvroSchema);
-        //System.out.println("Expected: " + expectedAvroSchema);
+        //System.out.println("Expected : " + expectedAvroSchema);
+        //System.out.println("Actual   : " + actualAvroSchema);
 
         // Schema objects weirdly say they're equal even if doc fields are wrong so we use string comparison
         assertEquals(expectedAvroSchema.toString(), actualAvroSchema.toString());
