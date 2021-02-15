@@ -1,5 +1,7 @@
 package org.jlab.alarms;
 
+import io.confluent.connect.avro.AvroData;
+import io.confluent.connect.avro.AvroDataConfig;
 import org.apache.kafka.connect.data.Schema;
 import org.apache.kafka.connect.data.SchemaBuilder;
 import org.apache.kafka.connect.data.Struct;
@@ -94,5 +96,41 @@ public class EpicsToAlarmValueTest {
 
         assertEquals(SeverityEnum.fromOrdinal((byte)2).name(), msg.getStruct("EPICSAlarming").getString("sevr"));
         assertEquals(StatusEnum.fromOrdinal((byte)3).name(), msg.getStruct("EPICSAlarming").getString("stat"));
+    }
+
+    @Test
+    public void connectSchemaToAvroSchema() {
+        AvroDataConfig config = new AvroDataConfig.Builder()
+                .with(AvroDataConfig.ENHANCED_AVRO_SCHEMA_SUPPORT_CONFIG, true)
+                .with(AvroDataConfig.CONNECT_META_DATA_CONFIG, false)
+                .build();
+
+        AvroData avroData = new AvroData(config);
+
+        org.apache.kafka.connect.data.Schema connectSchema = EpicsToAlarm.updatedValueSchema;
+
+        org.apache.avro.Schema actualAvroSchema = avroData.fromConnectSchema(connectSchema);
+
+        org.apache.avro.Schema expectedAvroSchema = org.apache.avro.SchemaBuilder
+                .builder()
+                .record("org.jlab.alarms.ActiveAlarmValue")
+                .doc("Alarming and Acknowledgements state")
+                .fields()
+                .name("msg").type().unionOf()
+                    .record("org.jlab.alarms.SimpleAlarming").doc("Alarming state for a simple alarm, if record is present then alarming, if missing/tombstone then not.  There are no fields.").fields().endRecord()
+                    .and()
+                    .record("org.jlab.alarms.SimpleAck").doc("A simple acknowledgment message, if record is present then acknowledged, if missing/tombstone then not.  There are no fields").fields().endRecord()
+                    .and()
+                    .record("org.jlab.alarms.EPICSAlarming").doc("EPICS alarming state").fields().endRecord()
+                    .and()
+                    .record("org.jlab.alarms.EPICSAck").doc("EPICS acknowledgement state").fields().endRecord()
+                .endUnion().noDefault()
+                .endRecord();
+
+        //System.out.println("Expected : " + expectedAvroSchema);
+        //System.out.println("Actual   : " + actualAvroSchema);
+
+        // Schema objects weirdly say they're equal even if doc fields are wrong so we use string comparison
+        assertEquals(expectedAvroSchema.toString(), actualAvroSchema.toString());
     }
 }
