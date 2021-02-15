@@ -83,6 +83,7 @@ public abstract class EpicsToAlarm<R extends ConnectRecord<R>> implements Transf
 
     static final Schema typeSchema = SchemaBuilder
             .string()
+            .name("org.jlab.alarms.ActiveMessageType")
             .doc("The type of message included in the value - required as part of the key to ensure compaction keeps the latest message of each type")
             .parameter("io.confluent.connect.avro.enum.doc.ActiveMessageType", "Enumeration of possible message types")
             .parameter("io.confluent.connect.avro.Enum", "org.jlab.alarms.ActiveMessageType")
