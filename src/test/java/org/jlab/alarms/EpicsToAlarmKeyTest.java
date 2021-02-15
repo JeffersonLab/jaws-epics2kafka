@@ -1,5 +1,7 @@
 package org.jlab.alarms;
 
+import io.confluent.connect.avro.AvroData;
+import io.confluent.connect.avro.AvroDataConfig;
 import org.apache.kafka.connect.data.Schema;
 import org.apache.kafka.connect.data.Struct;
 import org.apache.kafka.connect.source.SourceRecord;
@@ -70,5 +72,21 @@ public class EpicsToAlarmKeyTest {
 
         assertEquals(key, transformedKey.getString("name"));
         assertEquals("EPICSAlarming", transformedKey.getString("type"));
+    }
+
+    @Test
+    public void connectSchemaToAvroSchema() {
+        AvroDataConfig config = new AvroDataConfig.Builder()
+                .with(AvroDataConfig.ENHANCED_AVRO_SCHEMA_SUPPORT_CONFIG, true)
+                .with(AvroDataConfig.CONNECT_META_DATA_CONFIG, false)
+                .build();
+
+        AvroData avroData = new AvroData(config);
+
+        org.apache.kafka.connect.data.Schema connectSchema = EpicsToAlarm.updatedKeySchema;
+
+        org.apache.avro.Schema avroSchema = avroData.fromConnectSchema(connectSchema);
+
+        System.out.println(avroSchema);
     }
 }

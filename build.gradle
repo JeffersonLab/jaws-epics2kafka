@@ -18,11 +18,15 @@ compileJava {
 
 repositories {
     jcenter()
+    maven {
+        url "https://packages.confluent.io/maven/"
+    }
 }
 
 dependencies {
     implementation group: 'org.apache.kafka', name: 'connect-transforms', version: '2.6.0'
 
+    testImplementation 'io.confluent:kafka-connect-avro-data:6.1.0'
     testImplementation 'junit:junit:4.12'
 }
 
