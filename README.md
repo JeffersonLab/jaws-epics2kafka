@@ -1,5 +1,5 @@
 # epics2kafka-alarms [![Java CI with Gradle](https://github.com/JeffersonLab/epics2kafka-alarms/workflows/Java%20CI%20with%20Gradle/badge.svg)](https://github.com/JeffersonLab/epics2kafka-alarms/actions?query=workflow%3A%22Java+CI+with+Gradle%22) [![Bintray](https://img.shields.io/bintray/v/slominskir/maven/epics2kafka-alarms?label=Bintray)](https://bintray.com/slominskir/maven/epics2kafka-alarms) [![Docker Image Version (latest semver)](https://img.shields.io/docker/v/slominskir/epics2kafka-alarms?sort=semver&label=DockerHub)](https://hub.docker.com/r/slominskir/epics2kafka-alarms)
-An extenstion to the [epics2kafka](https://github.com/JeffersonLab/epics2kafka) Kafka Connector that adds a [Transform](https://kafka.apache.org/documentation.html#connect_transforms) plugin to serialize messages in the format required by the [JAWS](https://github.com/JeffersonLab/jaws).
+An extenstion to the [epics2kafka](https://github.com/JeffersonLab/epics2kafka) Kafka Connector that adds a [Transform](https://kafka.apache.org/documentation.html#connect_transforms) plugin to serialize messages in the format required by [JAWS](https://github.com/JeffersonLab/jaws).
 
 ---
 - [Overview](https://github.com/JeffersonLab/epics2kafka-alarms#overview)
