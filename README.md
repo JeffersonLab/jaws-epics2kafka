@@ -1,21 +1,21 @@
 # epics2kafka-alarms [![Java CI with Gradle](https://github.com/JeffersonLab/epics2kafka-alarms/workflows/Java%20CI%20with%20Gradle/badge.svg)](https://github.com/JeffersonLab/epics2kafka-alarms/actions?query=workflow%3A%22Java+CI+with+Gradle%22) [![Bintray](https://img.shields.io/bintray/v/slominskir/maven/epics2kafka-alarms?label=Bintray)](https://bintray.com/slominskir/maven/epics2kafka-alarms) [![Docker Image Version (latest semver)](https://img.shields.io/docker/v/slominskir/epics2kafka-alarms?sort=semver&label=DockerHub)](https://hub.docker.com/r/slominskir/epics2kafka-alarms)
-An extenstion to the [epics2kafka](https://github.com/JeffersonLab/epics2kafka) Kafka Connector that adds a [Transform](https://kafka.apache.org/documentation.html#connect_transforms) plugin to serialize messages in the format required by the [kafka-alarm-system](https://github.com/JeffersonLab/kafka-alarm-system).
+An extenstion to the [epics2kafka](https://github.com/JeffersonLab/epics2kafka) Kafka Connector that adds a [Transform](https://kafka.apache.org/documentation.html#connect_transforms) plugin to serialize messages in the format required by the [JAWS](https://github.com/JeffersonLab/jaws).
 
 ---
-- [Overview](https://github.com/JeffersonLab/kafka-alarm-system#overview)
-- [Quick Start with Compose](https://github.com/JeffersonLab/kafka-alarm-system#quick-start-with-compose)
-- [Build](https://github.com/JeffersonLab/kafka-alarm-system#build)
-- [Deploy](https://github.com/JeffersonLab/kafka-alarm-system#deploy)
-- [Configure](https://github.com/JeffersonLab/kafka-alarm-system#configure)
-- [Docker](https://github.com/JeffersonLab/kafka-alarm-system#docker)
+- [Overview](https://github.com/JeffersonLab/epics2kafka-alarms#overview)
+- [Quick Start with Compose](https://github.com/JeffersonLab/epics2kafka-alarms#quick-start-with-compose)
+- [Build](https://github.com/JeffersonLab/epics2kafka-alarms#build)
+- [Deploy](https://github.com/JeffersonLab/epics2kafka-alarms#deploy)
+- [Configure](https://github.com/JeffersonLab/epics2kafka-alarms#configure)
+- [Docker](https://github.com/JeffersonLab/epics2kafka-alarms#docker)
 ---
 
 ## Overview
 The following transformations are performed:
 
-**Key**: Alarm Name -> [active-alarms-key.avsc](https://github.com/JeffersonLab/kafka-alarm-system/blob/master/config/subject-schemas/active-alarms-key.avsc)
+**Key**: Alarm Name -> [active-alarms-key.avsc](https://github.com/JeffersonLab/jaws/blob/master/config/subject-schemas/active-alarms-key.avsc)
 
-**Value**: [epics-monitor-event-value](https://github.com/JeffersonLab/epics2kafka/blob/master/src/main/java/org/jlab/kafka/connect/CASourceTask.java#L42-L54) -> [active-alarms-value.avsc](https://github.com/JeffersonLab/kafka-alarm-system/blob/master/config/subject-schemas/active-alarms-value.avsc)
+**Value**: [epics-monitor-event-value](https://github.com/JeffersonLab/epics2kafka/blob/master/src/main/java/org/jlab/kafka/connect/CASourceTask.java#L42-L54) -> [active-alarms-value.avsc](https://github.com/JeffersonLab/jaws/blob/master/config/subject-schemas/active-alarms-value.avsc)
 
 **Note**: epics2kafka must be configured to use the optional _outkey_ field to ensure the alarm name is used as the key and not the channel name, which is the default.  The [registrations2epics](https://github.com/JeffersonLab/registrations2epics) app handles this.
 
