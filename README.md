@@ -11,11 +11,9 @@ An extenstion to the [epics2kafka](https://github.com/JeffersonLab/epics2kafka) 
 ---
 
 ## Overview
-The following transformations are performed:
+The following transformation is performed:
 
-**Key**: Alarm Name -> [active-alarms-key.avsc](https://github.com/JeffersonLab/jaws/blob/master/config/subject-schemas/active-alarms-key.avsc)
-
-**Value**: [epics-monitor-event-value](https://github.com/JeffersonLab/epics2kafka/blob/master/src/main/java/org/jlab/kafka/connect/CASourceTask.java#L42-L54) -> [active-alarms-value.avsc](https://github.com/JeffersonLab/jaws/blob/master/config/subject-schemas/active-alarms-value.avsc)
+**Value**: [epics-monitor-event-value](https://github.com/JeffersonLab/epics2kafka/blob/master/src/main/java/org/jlab/kafka/connect/CASourceTask.java#L42-L54) -> [active-alarms-value.avsc](https://github.com/JeffersonLab/jaws-libj/blob/main/src/main/avro/active-alarms-value.avsc)
 
 **Note**: epics2kafka must be configured to use the optional _outkey_ field to ensure the alarm name is used as the key and not the channel name, which is the default.  The [registrations2epics](https://github.com/JeffersonLab/registrations2epics) app handles this.
 
@@ -63,8 +61,7 @@ cp epics2kafka-alarms.jar /opt/kafka/plugins/epics2kafka-alarms
 ## Configure
 The Connect configuration (JSON):
 ```
-    "transforms": "alarmsKey,alarmsValue",
-    "transforms.alarmsKey.type": "org.jlab.alarms.EpicsToAlarm$Key",
+    "transforms": "alarmsValue",
     "transforms.alarmsValue.type": "org.jlab.alarms.EpicsToAlarm$Value
 ```
 ## Docker
