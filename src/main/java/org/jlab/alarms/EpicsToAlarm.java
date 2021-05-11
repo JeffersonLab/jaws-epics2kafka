@@ -76,43 +76,12 @@ public abstract class EpicsToAlarm<R extends ConnectRecord<R>> implements Transf
             .parameter("io.confluent.connect.avro.Enum.22", "WRITE_ACCESS")
             .build();
 
-    static final Schema ackEnumSchema = SchemaBuilder
-            .string()
-            .name("org.jlab.alarms.EPICSAcknowledgementEnum")
-            .doc("Indicates whether this alarm has been explicitly acknowledged - useful for latching alarms which can only be cleared after acknowledgement")
-            .parameter("io.confluent.connect.avro.enum.doc.EPICSAcknowledgementEnum", "Enumeration of possible EPICS acknowledgement states")
-            .parameter("io.confluent.connect.avro.Enum", "org.jlab.alarms.EPICSAcknowledgementEnum")
-            .parameter("io.confluent.connect.avro.Enum.1", "NO_ACK")
-            .parameter("io.confluent.connect.avro.Enum.2", "MINOR_ACK")
-            .parameter("io.confluent.connect.avro.Enum.3", "MAJOR_ACK")
-            .build();
-
-    static final Schema typeSchema = SchemaBuilder
-            .string()
-            .name("org.jlab.alarms.ActiveMessageType")
-            .doc("The type of message included in the value - required as part of the key to ensure compaction keeps the latest message of each type")
-            .parameter("io.confluent.connect.avro.enum.doc.ActiveMessageType", "Enumeration of possible message types")
-            .parameter("io.confluent.connect.avro.Enum", "org.jlab.alarms.ActiveMessageType")
-            .parameter("io.confluent.connect.avro.Enum.1", "SimpleAlarming")
-            .parameter("io.confluent.connect.avro.Enum.2", "SimpleAck")
-            .parameter("io.confluent.connect.avro.Enum.3", "EPICSAlarming")
-            .parameter("io.confluent.connect.avro.Enum.4", "EPICSAck")
-            .build();
-
     static final Schema alarmingSchema = SchemaBuilder
             .struct()
             .optional()
             .name("org.jlab.alarms.SimpleAlarming")
             .doc("Alarming state for a simple alarm, if record is present then alarming, if missing/tombstone then not.  There are no fields.")
             .parameter("io.confluent.connect.avro.record.doc", "Alarming state for a simple alarm, if record is present then alarming, if missing/tombstone then not.  There are no fields.")
-            .build();
-
-    static final Schema ackSchema = SchemaBuilder
-            .struct()
-            .optional()
-            .name("org.jlab.alarms.SimpleAck")
-            .doc("A simple acknowledgment message, if record is present then acknowledged, if missing/tombstone then not.  There are no fields")
-            .parameter("io.confluent.connect.avro.record.doc", "A simple acknowledgment message, if record is present then acknowledged, if missing/tombstone then not.  There are no fields")
             .build();
 
     static final Schema alarmingEPICSSchema = SchemaBuilder
@@ -127,46 +96,22 @@ public abstract class EpicsToAlarm<R extends ConnectRecord<R>> implements Transf
             .field("stat", statSchema)
             .build();
 
-    static final Schema ackEPICSSchema = SchemaBuilder
-            .struct()
-            .optional()
-            .name("org.jlab.alarms.EPICSAck")
-            .doc("EPICS acknowledgement state")
-            .parameter("io.confluent.connect.avro.record.doc", "EPICS acknowledgement state")
-            .parameter("io.confluent.connect.avro.field.doc.ack","Indicates whether this alarm has been explicitly acknowledged - useful for latching alarms which can only be cleared after acknowledgement")
-            .field("ack", ackEnumSchema)
-            .build();
-
     static final Schema msgSchema = SchemaBuilder
             .struct()
             .name("io.confluent.connect.avro.Union")
-            .doc("Two types of messages are allowed: Alarming and Acknowledgement; There can be multiple flavors of each type for different alarm producers; modeled as a nested union to avoid complications of union at root of schema.")
+            .doc("Type of alarming value")
             .field("SimpleAlarming", alarmingSchema)
-            .field("SimpleAck", ackSchema)
             .field("EPICSAlarming", alarmingEPICSSchema)
-            .field("EPICSAck", ackEPICSSchema)
             .build();
 
     static final Schema updatedValueSchema = SchemaBuilder
             .struct()
-            .name("org.jlab.alarms.ActiveAlarmValue")
-            .doc("Alarming and Acknowledgements state")
-            .parameter("io.confluent.connect.avro.record.doc", "Alarming and Acknowledgements state")
-            .parameter("io.confluent.connect.avro.field.doc.msg","Two types of messages are allowed: Alarming and Acknowledgement; There can be multiple flavors of each type for different alarm producers; modeled as a nested union to avoid complications of union at root of schema.")
+            .name("org.jlab.jaws.entity.ActiveAlarm")
+            .doc("Alarming state")
+            .parameter("io.confluent.connect.avro.record.doc", "Alarming state")
+            .parameter("io.confluent.connect.avro.field.doc.msg","Type of alarming value")
             .version(1)
             .field("msg", msgSchema)
-            .build();
-
-    static final Schema updatedKeySchema = SchemaBuilder
-            .struct()
-            .name("org.jlab.alarms.ActiveAlarmKey")
-            .doc("Active alarms state (alarming or acknowledgment)")
-            .parameter("io.confluent.connect.avro.record.doc", "Active alarms state (alarming or acknowledgment)")
-            .parameter("io.confluent.connect.avro.field.doc.name", "The unique name of the alarm")
-            .parameter("io.confluent.connect.avro.field.doc.type", "The type of message included in the value - required as part of the key to ensure compaction keeps the latest message of each type")
-            .version(1)
-            .field("name", SchemaBuilder.string().doc("The unique name of the alarm").build())
-            .field("type", typeSchema)
             .build();
 
     final ConnectHeaders headers = new ConnectHeaders();
@@ -244,61 +189,6 @@ public abstract class EpicsToAlarm<R extends ConnectRecord<R>> implements Transf
     protected abstract Object operatingValue(R record);
 
     protected abstract R newRecord(R record, Schema updatedSchema, Object updatedValue);
-
-    public static class Key<R extends ConnectRecord<R>> extends EpicsToAlarm<R> {
-
-        @Override
-        protected R applySchemaless(R record) {
-            final String original = record.key().toString();
-
-            final Map<String, Object> updatedMap = doUpdate(original);
-
-            return newRecord(record, null, updatedMap);
-        }
-
-        @Override
-        protected R applyWithSchema(R record) {
-            final String original = record.key().toString();
-
-            final Struct updatedStruct = doUpdate(original, updatedKeySchema);
-
-            return newRecord(record, updatedKeySchema, updatedStruct);
-        }
-
-        protected Map<String, Object> doUpdate(String original) {
-            Map<String, Object> updated = new HashMap<>();
-
-            updated.put("name", original);
-            updated.put("type", "EPICSAlarming");
-
-            return updated;
-        }
-
-        protected Struct doUpdate(String original, Schema updatedSchema) {
-            Struct updated = new Struct(updatedSchema);
-
-            updated.put("name", original);
-            updated.put("type", "EPICSAlarming");
-
-            return updated;
-        }
-
-        @Override
-        protected Schema operatingSchema(R record) {
-            return record.keySchema();
-        }
-
-        @Override
-        protected Object operatingValue(R record) {
-            return record.key();
-        }
-
-        @Override
-        protected R newRecord(R record, Schema updatedSchema, Object updatedValue) {
-            return record.newRecord(record.topic(), record.kafkaPartition(), updatedSchema, updatedValue, record.valueSchema(), record.value(), record.timestamp(), headers);
-        }
-
-    }
 
     public static class Value<R extends ConnectRecord<R>> extends EpicsToAlarm<R> {
 
