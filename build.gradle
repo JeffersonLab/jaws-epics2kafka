@@ -1,11 +1,10 @@
 plugins {
     id 'java-library'
     id 'maven-publish'
-    id 'com.jfrog.bintray' version "1.8.5"
 }
 
-description "JLab Kafka Connect transform from epics2kafka to kafka-alarm-system"
-group 'org.jlab.alarms'
+description "JLab Kafka Connect transform from epics2kafka to JAWS"
+group 'org.jlab'
 version '1.1.0'
 
 sourceCompatibility = 1.8
@@ -17,14 +16,15 @@ compileJava {
 }
 
 repositories {
-    jcenter()
+    mavenCentral()
     maven {
         url "https://packages.confluent.io/maven/"
     }
 }
 
 dependencies {
-    implementation group: 'org.apache.kafka', name: 'connect-transforms', version: '2.6.0'
+    implementation 'org.apache.kafka:connect-transforms:2.6.0',
+            'org.jlab:jaws-libj:1.1.0'
 
     testImplementation 'io.confluent:kafka-connect-avro-data:6.1.0'
     testImplementation 'junit:junit:4.12'
@@ -71,23 +71,6 @@ publishing {
                 root.appendNode('name', project.name)
                 root.children().last() + pomConfig
             }
-        }
-    }
-}
-
-bintray {
-    user = project.hasProperty('bintrayUser') ? project.property('bintrayUser') : System.getenv('BINTRAY_USER')
-    key = project.hasProperty('bintrayApiKey') ? project.property('bintrayApiKey') : System.getenv('BINTRAY_API_KEY')
-
-    publications = ['ProjectPublication']
-
-    pkg {
-        repo = 'maven'
-        name = project.name
-        licenses = ['MIT']
-        vcsUrl = 'https://github.com/JeffersonLab/epics2kafka-alarms.git'
-        version {
-            name = project.version
         }
     }
 }
