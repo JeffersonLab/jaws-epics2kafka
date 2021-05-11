@@ -6,6 +6,7 @@ import org.apache.kafka.connect.data.Schema;
 import org.apache.kafka.connect.data.SchemaBuilder;
 import org.apache.kafka.connect.data.Struct;
 import org.apache.kafka.connect.source.SourceRecord;
+import org.jlab.jaws.entity.ActiveAlarm;
 import org.junit.After;
 import org.junit.Test;
 
@@ -98,18 +99,25 @@ public class EpicsToAlarmValueTest {
 
     @Test
     public void connectSchemaToAvroSchema() {
-        AvroDataConfig config = new AvroDataConfig.Builder()
+        AvroData inputData = new AvroData(new AvroDataConfig.Builder()
+                .with(AvroDataConfig.ENHANCED_AVRO_SCHEMA_SUPPORT_CONFIG, true)
+                .with(AvroDataConfig.CONNECT_META_DATA_CONFIG, true)
+                .build());
+
+        AvroData outputData = new AvroData(new AvroDataConfig.Builder()
                 .with(AvroDataConfig.ENHANCED_AVRO_SCHEMA_SUPPORT_CONFIG, true)
                 .with(AvroDataConfig.CONNECT_META_DATA_CONFIG, false)
-                .build();
+                .build());
 
-        AvroData avroData = new AvroData(config);
+        //org.apache.kafka.connect.data.Schema connectSchema = EpicsToAlarm.updatedValueSchema;
 
-        org.apache.kafka.connect.data.Schema connectSchema = EpicsToAlarm.updatedValueSchema;
+        org.apache.kafka.connect.data.Schema connectSchema = inputData.toConnectSchema(ActiveAlarm.getClassSchema());
 
-        org.apache.avro.Schema actualAvroSchema = avroData.fromConnectSchema(connectSchema);
+        org.apache.avro.Schema actualAvroSchema = outputData.fromConnectSchema(connectSchema);
 
-        org.apache.avro.Schema expectedAvroSchema = org.apache.avro.SchemaBuilder
+        org.apache.avro.Schema expectedAvroSchema = ActiveAlarm.getClassSchema();
+
+        /*org.apache.avro.Schema expectedAvroSchema = org.apache.avro.SchemaBuilder
                 .builder()
                 .record("org.jlab.jaws.entity.ActiveAlarm")
                 .doc("Alarming state")
@@ -122,7 +130,7 @@ public class EpicsToAlarmValueTest {
                         .name("stat").doc("Alarming status (EPICS .STAT field)").type().enumeration("StatEnum").doc("Enumeration of possible EPICS .STAT values").symbols("NO_ALARM","READ","WRITE","HIHI","HIGH","LOLO","LOW","STATE","COS","COMM","TIMEOUT","HW_LIMIT","CALC","SCAN","LINK","SOFT","BAD_SUB","UDF","DISABLE","SIMM","READ_ACCESS","WRITE_ACCESS").noDefault()
                     .endRecord()
                 .endUnion().noDefault()
-                .endRecord();
+                .endRecord();*/
 
         System.out.println("Expected : " + expectedAvroSchema);
         System.out.println("Actual   : " + actualAvroSchema);
