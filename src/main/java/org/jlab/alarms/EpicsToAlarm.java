@@ -6,8 +6,8 @@ import org.apache.kafka.connect.data.*;
 import org.apache.kafka.connect.header.ConnectHeaders;
 import org.apache.kafka.connect.transforms.Transformation;
 import org.apache.kafka.connect.transforms.util.SimpleConfig;
-import org.jlab.alarms.util.SeverityEnum;
-import org.jlab.alarms.util.StatusEnum;
+import org.jlab.jaws.entity.SevrEnum;
+import org.jlab.jaws.entity.StatEnum;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
@@ -27,9 +27,12 @@ public abstract class EpicsToAlarm<R extends ConnectRecord<R>> implements Transf
     public static final String OVERVIEW_DOC =
             "Transform epics2kafka messages to JAWS format";
 
+    public static final SevrEnum[] sevrByOrder = SevrEnum.values();
+    public static final StatEnum[] statByOrder = StatEnum.values();
+
     public static final ConfigDef CONFIG_DEF = new ConfigDef();
 
-    private static final String PURPOSE = "transform epics2kafka messages to kafka-alarm-system format";
+    private static final String PURPOSE = "transform epics2kafka messages to JAWS format";
 
     static final Schema sevrSchema = SchemaBuilder
             .string()
@@ -325,8 +328,8 @@ public abstract class EpicsToAlarm<R extends ConnectRecord<R>> implements Transf
             byte severity = (byte)original.get("severity");
             byte status = (byte)original.get("status");
 
-            String sevrStr = SeverityEnum.fromOrdinal(severity).name();
-            String statStr = StatusEnum.fromOrdinal(status).name();
+            String sevrStr = sevrByOrder[severity].name();
+            String statStr = statByOrder[status].name();
 
             epicsMap.put("sevr", sevrStr);
             epicsMap.put("stat", statStr);
@@ -345,8 +348,8 @@ public abstract class EpicsToAlarm<R extends ConnectRecord<R>> implements Transf
             byte severity = original.getInt8("severity");
             byte status = original.getInt8("status");
 
-            String sevrStr = SeverityEnum.fromOrdinal(severity).name();
-            String statStr = StatusEnum.fromOrdinal(status).name();
+            String sevrStr = sevrByOrder[severity].name();
+            String statStr = statByOrder[status].name();
 
             epicsStruct.put("sevr", sevrStr);
             epicsStruct.put("stat", statStr);

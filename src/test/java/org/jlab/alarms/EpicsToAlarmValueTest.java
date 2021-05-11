@@ -6,8 +6,6 @@ import org.apache.kafka.connect.data.Schema;
 import org.apache.kafka.connect.data.SchemaBuilder;
 import org.apache.kafka.connect.data.Struct;
 import org.apache.kafka.connect.source.SourceRecord;
-import org.jlab.alarms.util.SeverityEnum;
-import org.jlab.alarms.util.StatusEnum;
 import org.junit.After;
 import org.junit.Test;
 
@@ -76,8 +74,8 @@ public class EpicsToAlarmValueTest {
 
         Map msg = (Map)transformedValue.get("msg");
 
-        assertEquals(SeverityEnum.fromOrdinal((byte)2).name(), ((Map)msg.get("EPICSAlarming")).get("sevr"));
-        assertEquals(StatusEnum.fromOrdinal((byte)3).name(), ((Map)msg.get("EPICSAlarming")).get("stat"));
+        assertEquals(EpicsToAlarm.sevrByOrder[(byte)2].name(), ((Map)msg.get("EPICSAlarming")).get("sevr"));
+        assertEquals(EpicsToAlarm.statByOrder[(byte)3].name(), ((Map)msg.get("EPICSAlarming")).get("stat"));
     }
 
     @Test
@@ -94,8 +92,8 @@ public class EpicsToAlarmValueTest {
 
         Struct msg = transformedValue.getStruct("msg");
 
-        assertEquals(SeverityEnum.fromOrdinal((byte)2).name(), msg.getStruct("EPICSAlarming").getString("sevr"));
-        assertEquals(StatusEnum.fromOrdinal((byte)3).name(), msg.getStruct("EPICSAlarming").getString("stat"));
+        assertEquals(EpicsToAlarm.sevrByOrder[(byte)2].name(), msg.getStruct("EPICSAlarming").getString("sevr"));
+        assertEquals(EpicsToAlarm.statByOrder[(byte)3].name(), msg.getStruct("EPICSAlarming").getString("stat"));
     }
 
     @Test
