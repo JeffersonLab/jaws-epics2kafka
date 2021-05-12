@@ -57,7 +57,6 @@ Copy the epics2kafka-alarms.jar file into a subdirectory of the Kafka plugins di
 mkdir /opt/kafka/plugins/epics2kafka-alarms
 cp epics2kafka-alarms.jar /opt/kafka/plugins/epics2kafka-alarms
 ```
-**Note**: A jar file containing the connect transform (without epics2kafka) is available on [Bintray](https://dl.bintray.com/slominskir/maven/org/jlab/kafka/connect/transform/epics2kafka-alarms/).
 ## Configure
 The Connect configuration (JSON):
 ```
