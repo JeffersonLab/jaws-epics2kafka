@@ -75,8 +75,8 @@ public class EpicsToAlarmValueTest {
 
         Map msg = (Map)transformedValue.get("msg");
 
-        assertEquals(EpicsToAlarm.sevrByOrder[(byte)2].name(), ((Map)msg.get("EPICSAlarming")).get("sevr"));
-        assertEquals(EpicsToAlarm.statByOrder[(byte)3].name(), ((Map)msg.get("EPICSAlarming")).get("stat"));
+        assertEquals(EpicsToAlarm.sevrByOrder[(byte)2].name(), ((Map)msg.get("org.jlab.jaws.entity.EPICSAlarming")).get("sevr"));
+        assertEquals(EpicsToAlarm.statByOrder[(byte)3].name(), ((Map)msg.get("org.jlab.jaws.entity.EPICSAlarming")).get("stat"));
     }
 
     @Test
@@ -93,47 +93,25 @@ public class EpicsToAlarmValueTest {
 
         Struct msg = transformedValue.getStruct("msg");
 
-        assertEquals(EpicsToAlarm.sevrByOrder[(byte)2].name(), msg.getStruct("EPICSAlarming").getString("sevr"));
-        assertEquals(EpicsToAlarm.statByOrder[(byte)3].name(), msg.getStruct("EPICSAlarming").getString("stat"));
+        assertEquals(EpicsToAlarm.sevrByOrder[(byte)2].name(), msg.getStruct("org.jlab.jaws.entity.EPICSAlarming").getString("sevr"));
+        assertEquals(EpicsToAlarm.statByOrder[(byte)3].name(), msg.getStruct("org.jlab.jaws.entity.EPICSAlarming").getString("stat"));
     }
 
     @Test
     public void connectSchemaToAvroSchema() {
-        AvroData inputData = new AvroData(new AvroDataConfig.Builder()
-                .with(AvroDataConfig.ENHANCED_AVRO_SCHEMA_SUPPORT_CONFIG, true)
-                .with(AvroDataConfig.CONNECT_META_DATA_CONFIG, true)
-                .build());
-
         AvroData outputData = new AvroData(new AvroDataConfig.Builder()
                 .with(AvroDataConfig.ENHANCED_AVRO_SCHEMA_SUPPORT_CONFIG, true)
                 .with(AvroDataConfig.CONNECT_META_DATA_CONFIG, false)
                 .build());
 
-        //org.apache.kafka.connect.data.Schema connectSchema = EpicsToAlarm.updatedValueSchema;
-
-        org.apache.kafka.connect.data.Schema connectSchema = inputData.toConnectSchema(ActiveAlarm.getClassSchema());
+        org.apache.kafka.connect.data.Schema connectSchema = EpicsToAlarm.updatedValueSchema;
 
         org.apache.avro.Schema actualAvroSchema = outputData.fromConnectSchema(connectSchema);
 
         org.apache.avro.Schema expectedAvroSchema = ActiveAlarm.getClassSchema();
 
-        /*org.apache.avro.Schema expectedAvroSchema = org.apache.avro.SchemaBuilder
-                .builder()
-                .record("org.jlab.jaws.entity.ActiveAlarm")
-                .doc("Alarming state")
-                .fields()
-                .name("msg").doc("Type of alarming value").type().unionOf()
-                    .record("org.jlab.alarms.SimpleAlarming").doc("Alarming state for a simple alarm, if record is present then alarming, if missing/tombstone then not.  There are no fields.").fields().endRecord()
-                    .and()
-                    .record("org.jlab.alarms.EPICSAlarming").doc("EPICS alarming state").fields()
-                        .name("sevr").doc("Alarming state (EPICS .SEVR field)").type().enumeration("SevrEnum").doc("Enumeration of possible EPICS .SEVR values").symbols("NO_ALARM","MINOR","MAJOR","INVALID").noDefault()
-                        .name("stat").doc("Alarming status (EPICS .STAT field)").type().enumeration("StatEnum").doc("Enumeration of possible EPICS .STAT values").symbols("NO_ALARM","READ","WRITE","HIHI","HIGH","LOLO","LOW","STATE","COS","COMM","TIMEOUT","HW_LIMIT","CALC","SCAN","LINK","SOFT","BAD_SUB","UDF","DISABLE","SIMM","READ_ACCESS","WRITE_ACCESS").noDefault()
-                    .endRecord()
-                .endUnion().noDefault()
-                .endRecord();*/
-
-        System.out.println("Expected : " + expectedAvroSchema);
-        System.out.println("Actual   : " + actualAvroSchema);
+        //System.out.println("Expected : " + expectedAvroSchema);
+        //System.out.println("Actual   : " + actualAvroSchema);
 
         // Schema objects weirdly say they're equal even if doc fields are wrong so we use string comparison
         assertEquals(expectedAvroSchema.toString(), actualAvroSchema.toString());

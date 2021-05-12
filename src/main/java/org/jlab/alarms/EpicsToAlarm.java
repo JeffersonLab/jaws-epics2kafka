@@ -1,11 +1,14 @@
 package org.jlab.alarms;
 
+import io.confluent.connect.avro.AvroData;
+import io.confluent.connect.avro.AvroDataConfig;
 import org.apache.kafka.common.config.ConfigDef;
 import org.apache.kafka.connect.connector.ConnectRecord;
 import org.apache.kafka.connect.data.*;
 import org.apache.kafka.connect.header.ConnectHeaders;
 import org.apache.kafka.connect.transforms.Transformation;
 import org.apache.kafka.connect.transforms.util.SimpleConfig;
+import org.jlab.jaws.entity.ActiveAlarm;
 import org.jlab.jaws.entity.SevrEnum;
 import org.jlab.jaws.entity.StatEnum;
 
@@ -34,85 +37,12 @@ public abstract class EpicsToAlarm<R extends ConnectRecord<R>> implements Transf
 
     private static final String PURPOSE = "transform epics2kafka messages to JAWS format";
 
-    static final Schema sevrSchema = SchemaBuilder
-            .string()
-            .name("org.jlab.alarms.SevrEnum")
-            .doc("Alarming state (EPICS .SEVR field)")
-            .parameter("io.confluent.connect.avro.enum.doc.SevrEnum", "Enumeration of possible EPICS .SEVR values")
-            .parameter("io.confluent.connect.avro.Enum", "org.jlab.alarms.SevrEnum")
-            .parameter("io.confluent.connect.avro.Enum.1", "NO_ALARM")
-            .parameter("io.confluent.connect.avro.Enum.2", "MINOR")
-            .parameter("io.confluent.connect.avro.Enum.3", "MAJOR")
-            .parameter("io.confluent.connect.avro.Enum.4", "INVALID")
-            .build();
+    static AvroData inputData = new AvroData(new AvroDataConfig.Builder()
+                .with(AvroDataConfig.ENHANCED_AVRO_SCHEMA_SUPPORT_CONFIG, true)
+                .with(AvroDataConfig.CONNECT_META_DATA_CONFIG, true)
+                .build());
 
-    static final Schema statSchema = SchemaBuilder
-            .string()
-            .name("org.jlab.alarms.StatEnum")
-            .doc("Alarming status (EPICS .STAT field)")
-            .parameter("io.confluent.connect.avro.enum.doc.StatEnum", "Enumeration of possible EPICS .STAT values")
-            .parameter("io.confluent.connect.avro.Enum", "org.jlab.alarms.StatEnum")
-            .parameter("io.confluent.connect.avro.Enum.1", "NO_ALARM")
-            .parameter("io.confluent.connect.avro.Enum.2", "READ")
-            .parameter("io.confluent.connect.avro.Enum.3", "WRITE")
-            .parameter("io.confluent.connect.avro.Enum.4", "HIHI")
-            .parameter("io.confluent.connect.avro.Enum.5", "HIGH")
-            .parameter("io.confluent.connect.avro.Enum.6", "LOLO")
-            .parameter("io.confluent.connect.avro.Enum.7", "LOW")
-            .parameter("io.confluent.connect.avro.Enum.8", "STATE")
-            .parameter("io.confluent.connect.avro.Enum.9", "COS")
-            .parameter("io.confluent.connect.avro.Enum.10", "COMM")
-            .parameter("io.confluent.connect.avro.Enum.11", "TIMEOUT")
-            .parameter("io.confluent.connect.avro.Enum.12", "HW_LIMIT")
-            .parameter("io.confluent.connect.avro.Enum.13", "CALC")
-            .parameter("io.confluent.connect.avro.Enum.14", "SCAN")
-            .parameter("io.confluent.connect.avro.Enum.15", "LINK")
-            .parameter("io.confluent.connect.avro.Enum.16", "SOFT")
-            .parameter("io.confluent.connect.avro.Enum.17", "BAD_SUB")
-            .parameter("io.confluent.connect.avro.Enum.18", "UDF")
-            .parameter("io.confluent.connect.avro.Enum.19", "DISABLE")
-            .parameter("io.confluent.connect.avro.Enum.20", "SIMM")
-            .parameter("io.confluent.connect.avro.Enum.21", "READ_ACCESS")
-            .parameter("io.confluent.connect.avro.Enum.22", "WRITE_ACCESS")
-            .build();
-
-    static final Schema alarmingSchema = SchemaBuilder
-            .struct()
-            .optional()
-            .name("org.jlab.alarms.SimpleAlarming")
-            .doc("Alarming state for a simple alarm, if record is present then alarming, if missing/tombstone then not.  There are no fields.")
-            .parameter("io.confluent.connect.avro.record.doc", "Alarming state for a simple alarm, if record is present then alarming, if missing/tombstone then not.  There are no fields.")
-            .build();
-
-    static final Schema alarmingEPICSSchema = SchemaBuilder
-            .struct()
-            .optional()
-            .name("org.jlab.alarms.EPICSAlarming")
-            .doc("EPICS alarming state")
-            .parameter("io.confluent.connect.avro.record.doc", "EPICS alarming state")
-            .parameter("io.confluent.connect.avro.field.doc.sevr","Alarming state (EPICS .SEVR field)")
-            .parameter("io.confluent.connect.avro.field.doc.stat","Alarming status (EPICS .STAT field)")
-            .field("sevr", sevrSchema)
-            .field("stat", statSchema)
-            .build();
-
-    static final Schema msgSchema = SchemaBuilder
-            .struct()
-            .name("io.confluent.connect.avro.Union")
-            .doc("Type of alarming value")
-            .field("SimpleAlarming", alarmingSchema)
-            .field("EPICSAlarming", alarmingEPICSSchema)
-            .build();
-
-    static final Schema updatedValueSchema = SchemaBuilder
-            .struct()
-            .name("org.jlab.jaws.entity.ActiveAlarm")
-            .doc("Alarming state")
-            .parameter("io.confluent.connect.avro.record.doc", "Alarming state")
-            .parameter("io.confluent.connect.avro.field.doc.msg","Type of alarming value")
-            .version(1)
-            .field("msg", msgSchema)
-            .build();
+    static final Schema updatedValueSchema = inputData.toConnectSchema(ActiveAlarm.getClassSchema());
 
     final ConnectHeaders headers = new ConnectHeaders();
 
@@ -224,7 +154,7 @@ public abstract class EpicsToAlarm<R extends ConnectRecord<R>> implements Transf
             epicsMap.put("sevr", sevrStr);
             epicsMap.put("stat", statStr);
 
-            msg.put("EPICSAlarming", epicsMap);
+            msg.put("org.jlab.jaws.entity.EPICSAlarming", epicsMap);
             updated.put("msg", msg);
 
             return updated;
@@ -232,8 +162,9 @@ public abstract class EpicsToAlarm<R extends ConnectRecord<R>> implements Transf
 
         protected Struct doUpdate(Struct original, Schema updatedSchema) {
             Struct updated = new Struct(updatedSchema);
-            Struct msg = new Struct(msgSchema);
-            Struct epicsStruct = new Struct(alarmingEPICSSchema);
+            Struct msg = new Struct(updatedSchema.field("msg").schema());
+
+            Struct epicsStruct = new Struct(msg.schema().fields().get(2).schema());
 
             byte severity = original.getInt8("severity");
             byte status = original.getInt8("status");
@@ -244,7 +175,7 @@ public abstract class EpicsToAlarm<R extends ConnectRecord<R>> implements Transf
             epicsStruct.put("sevr", sevrStr);
             epicsStruct.put("stat", statStr);
 
-            msg.put("EPICSAlarming", epicsStruct);
+            msg.put("org.jlab.jaws.entity.EPICSAlarming", epicsStruct);
             updated.put("msg", msg);
 
             return updated;
