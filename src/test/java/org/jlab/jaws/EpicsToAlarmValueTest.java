@@ -1,4 +1,4 @@
-package org.jlab.alarms;
+package org.jlab.jaws;
 
 import io.confluent.connect.avro.AvroData;
 import io.confluent.connect.avro.AvroDataConfig;

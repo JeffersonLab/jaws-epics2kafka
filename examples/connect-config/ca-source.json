@@ -13,8 +13,7 @@
     "value.converter.schema.registry.url": "http://registry:8081",
     "value.converter.enhanced.avro.schema.support":  true,
     "value.converter.connect.meta.data": false,
-    "transforms": "alarmsKey,alarmsValue",
-    "transforms.alarmsKey.type": "org.jlab.alarms.EpicsToAlarm$Key",
-    "transforms.alarmsValue.type": "org.jlab.alarms.EpicsToAlarm$Value"
+    "transforms": "alarmsValue",
+    "transforms.alarmsValue.type": "org.jlab.jaws.EpicsToAlarm$Value"
   }
 }

@@ -33,7 +33,7 @@ docker exec softioc caput channel1 1
 ```
 4. Verify that the active-alarms topic received a properly formatted message 
 ```
-docker exec -it console /scripts/client/list-active.py
+docker exec -it jaws /scripts/client/list-active.py
 ```
 ## Build
 This [Java 11](https://adoptopenjdk.net/) project uses the [Gradle 6](https://gradle.org/) build tool to automatically download dependencies and build the project from source:
@@ -61,7 +61,7 @@ cp epics2kafka-alarms.jar /opt/kafka/plugins/epics2kafka-alarms
 The Connect configuration (JSON):
 ```
     "transforms": "alarmsValue",
-    "transforms.alarmsValue.type": "org.jlab.alarms.EpicsToAlarm$Value
+    "transforms.alarmsValue.type": "org.jlab.jaws.EpicsToAlarm$Value
 ```
 ## Docker
 A Docker container with both epics2kafka and the epics2kafka-alarms transform installed:

@@ -13,8 +13,8 @@ RUN cd /tmp \
         && keytool -import -alias custom -file /usr/local/share/ca-certificates/customcert.crt -cacerts -storepass changeit -noprompt \
         && export OPTIONAL_CERT_ARG=-Djavax.net.ssl.trustStore=$JAVA_HOME/lib/security/cacerts \
         ; fi \
-    && gradle build $OPTIONAL_CERT_ARG
+    && gradle installDist $OPTIONAL_CERT_ARG
 
 FROM slominskir/epics2kafka:1.1.0
 
-COPY --from=builder /tmp/epics2kafka-alarms/build/libs $KAFKA_CONNECT_PLUGINS_DIR/epics2kafka-alarms
+COPY --from=builder /tmp/epics2kafka-alarms/build/install $KAFKA_CONNECT_PLUGINS_DIR/epics2kafka-alarms

@@ -1,6 +1,7 @@
 plugins {
     id 'java-library'
     id 'maven-publish'
+    id 'distribution'
 }
 
 description "JLab Kafka Connect transform from epics2kafka to JAWS"
@@ -24,10 +25,21 @@ repositories {
 
 dependencies {
     implementation 'org.apache.kafka:connect-transforms:2.6.0',
-            'org.jlab:jaws-libj:1.1.0',
             'org.apache.avro:avro:1.10.2',
-            'io.confluent:kafka-connect-avro-data:6.1.0'
+            'io.confluent:kafka-connect-avro-data:6.1.0',
+            'org.jlab:jaws-libj:1.1.0'
     testImplementation 'junit:junit:4.12'
+}
+
+distributions {
+    main {
+        contents {
+            from jar
+            from(configurations.runtimeClasspath)
+            include 'epics2kafka-alarms-*'
+            include 'jaws-libj-*'
+        }
+    }
 }
 
 test {
