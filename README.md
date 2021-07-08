@@ -57,6 +57,7 @@ Copy the epics2kafka-alarms.jar file into a subdirectory of the Kafka plugins di
 mkdir /opt/kafka/plugins/epics2kafka-alarms
 cp epics2kafka-alarms.jar /opt/kafka/plugins/epics2kafka-alarms
 ```
+**Note**: You'll also need to ensure the plugin has access to it's dependencies.   Specifically you'll need to copy the _jaws-libj.jar_ file into the _plugins/epics2kafka-alarms_ directory as well.   You might even need to setup a symbolic link inside the same directory (perhaps named "deps") pointing to the _/usr/share/java/kafka-serdes-tools_ directory or equivalent such that Confluent AVRO and Schema Registry depdnences are resolved (depends on what is part of the core Kafka install).
 ## Configure
 The Connect configuration (JSON):
 ```
