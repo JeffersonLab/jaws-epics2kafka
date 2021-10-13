@@ -41,7 +41,7 @@ This [Java 11](https://adoptopenjdk.net/) project uses the [Gradle 6](https://gr
 ```
 git clone https://github.com/JeffersonLab/jaws-epics2kafka
 cd jaws-epics2kafka
-gradlew build
+gradlew installDist
 ```
 **Note**: If you do not already have Gradle installed, it will be installed automatically by the wrapper script included in the source
 
