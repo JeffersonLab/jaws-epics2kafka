@@ -35,7 +35,6 @@ services:
       - "9092:9092"
     environment:
       ZOOKEEPER_CONNECT: 'zookeeper:2181'
-      CREATE_TOPICS: 'registered-alarms:1:1:compact,active-alarms:1:1:compact,shelved-alarms:1:1:compact'
 
   registry:
     image: confluentinc/cp-schema-registry:6.0.2
@@ -76,6 +75,6 @@ services:
       CONFIG_STORAGE_TOPIC: connect-configs
       OFFSET_STORAGE_TOPIC: connect-offsets
       STATUS_STORAGE_TOPIC: connect-status
-      MONITOR_CHANNELS: "channel1|active-alarms|a|alarm1,channel2|active-alarms|a|alarm2,channel3|active-alarms|a|alarm3"
+      MONITOR_CHANNELS: "channel1|alarm-activations|a|alarm1,channel2|alarm-activations|a|alarm2,channel3|alarm-activations|a|alarm3"
     volumes:
       - ./examples/connect-config:/config
