@@ -6,7 +6,7 @@ import org.apache.kafka.connect.data.Schema;
 import org.apache.kafka.connect.data.SchemaBuilder;
 import org.apache.kafka.connect.data.Struct;
 import org.apache.kafka.connect.source.SourceRecord;
-import org.jlab.jaws.entity.ActiveAlarm;
+import org.jlab.jaws.entity.AlarmActivationUnion;
 import org.junit.After;
 import org.junit.Test;
 
@@ -108,7 +108,7 @@ public class EpicsToAlarmValueTest {
 
         org.apache.avro.Schema actualAvroSchema = outputData.fromConnectSchema(connectSchema);
 
-        org.apache.avro.Schema expectedAvroSchema = ActiveAlarm.getClassSchema();
+        org.apache.avro.Schema expectedAvroSchema = AlarmActivationUnion.getClassSchema();
 
         //System.out.println("Expected : " + expectedAvroSchema);
         //System.out.println("Actual   : " + actualAvroSchema);

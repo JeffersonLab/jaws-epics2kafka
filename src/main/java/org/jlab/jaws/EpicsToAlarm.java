@@ -8,7 +8,7 @@ import org.apache.kafka.connect.data.*;
 import org.apache.kafka.connect.header.ConnectHeaders;
 import org.apache.kafka.connect.transforms.Transformation;
 import org.apache.kafka.connect.transforms.util.SimpleConfig;
-import org.jlab.jaws.entity.ActiveAlarm;
+import org.jlab.jaws.entity.AlarmActivationUnion;
 import org.jlab.jaws.entity.SevrEnum;
 import org.jlab.jaws.entity.StatEnum;
 
@@ -42,7 +42,7 @@ public abstract class EpicsToAlarm<R extends ConnectRecord<R>> implements Transf
                 .with(AvroDataConfig.CONNECT_META_DATA_CONFIG, true)
                 .build());
 
-    static final Schema updatedValueSchema = inputData.toConnectSchema(ActiveAlarm.getClassSchema());
+    static final Schema updatedValueSchema = inputData.toConnectSchema(AlarmActivationUnion.getClassSchema());
 
     final ConnectHeaders headers = new ConnectHeaders();
 
