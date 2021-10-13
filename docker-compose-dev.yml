@@ -2,7 +2,7 @@
 version: '3.8'
 
 services:
-  epics2kafkas:
+  epics2kafka:
     build:
       context: .
       dockerfile: Dockerfile
