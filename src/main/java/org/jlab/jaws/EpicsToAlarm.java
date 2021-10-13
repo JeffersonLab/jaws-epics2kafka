@@ -63,7 +63,7 @@ public abstract class EpicsToAlarm<R extends ConnectRecord<R>> implements Transf
 
         headers.addString("user", user);
         headers.addString("host", hostname);
-        headers.addString("producer", "epics2kafka-alarms");
+        headers.addString("producer", "jaws-epics2kafka");
     }
 
     /**
