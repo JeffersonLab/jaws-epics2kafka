@@ -62,14 +62,9 @@ services:
       BOOTSTRAP_SERVERS: "kafka:9092"
       SCHEMA_REGISTRY: "http://registry:8081"
 
-  epics2kafka-alarms:
-    build:
-      context: .
-      dockerfile: Dockerfile
-      args:
-        - CUSTOM_CRT_URL=http://pki.jlab.org/JLabCA.crt
-    hostname: epics2kafka-alarms
-    container_name: epics2kafka-alarms
+  epics2kafka:
+    hostname: epics2kafka
+    container_name: epics2kafka
     depends_on:
       - zookeeper
       - kafka

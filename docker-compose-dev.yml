@@ -2,6 +2,11 @@
 version: '3.8'
 
 services:
-  epics2kafka-alarms:
+  epics2kafkas:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        - CUSTOM_CRT_URL=http://pki.jlab.org/JLabCA.crt
     volumes:
-      - ./build/install:/kafka/connect/epics2kafka-alarms
+      - ./build/install:/kafka/connect/jaws-epics2kafka

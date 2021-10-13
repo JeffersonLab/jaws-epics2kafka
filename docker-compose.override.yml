@@ -1,0 +1,6 @@
+---
+version: '3.8'
+
+services:
+  epics2kafkas:
+    image: slominskir/jaws-epics2kafka:2.0.0
