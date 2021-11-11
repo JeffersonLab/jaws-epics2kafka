@@ -3,4 +3,4 @@ version: '3.8'
 
 services:
   epics2kafka:
-    image: slominskir/jaws-epics2kafka:2.0.0
+    image: slominskir/jaws-epics2kafka:2.1.0
