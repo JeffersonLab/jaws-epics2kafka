@@ -27,7 +27,7 @@ dependencies {
     implementation 'org.apache.kafka:connect-transforms:2.6.2',
             'org.apache.avro:avro:1.10.2',
             'io.confluent:kafka-connect-avro-data:6.0.2',
-            'org.jlab:jaws-libj:1.3.0'
+            'org.jlab:jaws-libj:1.5.0'
     testImplementation 'junit:junit:4.12'
 }
 
