@@ -33,7 +33,7 @@ docker exec softioc caput channel1 1
 ```
 4. Verify that the alarm-activations topic received a properly formatted message 
 ```
-docker exec -it jaws /scripts/client/list-active.py
+docker exec -it jaws /scripts/client/list-activations.py
 ```
 ## Build
 This [Java 11](https://adoptopenjdk.net/) project uses the [Gradle 6](https://gradle.org/) build tool to automatically download dependencies and build the project from source:
