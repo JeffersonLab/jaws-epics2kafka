@@ -1,0 +1,32 @@
+services:
+  zookeeper:
+    extends:
+      file: build.yml
+      service: zookeeper
+
+  kafka:
+    extends:
+      file: build.yml
+      service: kafka
+
+  registry:
+    extends:
+      file: build.yml
+      service: registry
+
+  jaws:
+    extends:
+      file: build.yml
+      service: jaws
+
+  softioc:
+    extends:
+      file: build.yml
+      service: softioc
+
+  epics2kafka:
+    extends:
+      file: build.yml
+      service: epics2kafka
+    volumes:
+      - ./build/install:/kafka/connect/jaws-epics2kafka
