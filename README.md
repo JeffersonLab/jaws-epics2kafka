@@ -35,7 +35,7 @@ docker exec softioc caput channel1 1
 ```
 4. Verify that the alarm-activations topic received a properly formatted message 
 ```
-docker exec -it jaws /scripts/client/list-activations.py
+docker exec -it jaws /scripts/client/list-activations.py --export
 ```
 
 See: [Docker Compose Strategy](https://gist.github.com/slominskir/a7da801e8259f5974c978f9c3091d52c)
