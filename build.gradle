@@ -6,7 +6,7 @@ plugins {
 
 description "JLab Kafka Connect transform from epics2kafka to JAWS"
 group 'org.jlab'
-version '2.1.0'
+version '2.2.0'
 
 compileJava {
     options.release = 8
