@@ -1,4 +1,4 @@
-# jaws-epics2kafka [![Java CI with Gradle](https://github.com/JeffersonLab/jaws-epics2kafka/workflows/Java%20CI%20with%20Gradle/badge.svg)](https://github.com/JeffersonLab/jaws-epics2kafka/actions?query=workflow%3A%22Java+CI+with+Gradle%22) [![Docker](https://img.shields.io/docker/v/slominskir/jaws-epics2kafka?sort=semver&label=DockerHub)](https://hub.docker.com/r/slominskir/jaws-epics2kafka)
+# jaws-epics2kafka [![Java CI with Gradle](https://github.com/JeffersonLab/jaws-epics2kafka/actions/workflows/gradle.yml/badge.svg)](https://github.com/JeffersonLab/jaws-epics2kafka/actions/workflows/gradle.yml) [![Docker](https://img.shields.io/docker/v/slominskir/jaws-epics2kafka?sort=semver&label=DockerHub)](https://hub.docker.com/r/slominskir/jaws-epics2kafka)
 An extenstion to the [epics2kafka](https://github.com/JeffersonLab/epics2kafka) Kafka Connector that adds a [Transform](https://kafka.apache.org/documentation.html#connect_transforms) plugin to serialize messages in the format required by [JAWS](https://github.com/JeffersonLab/jaws).
 
 ---
