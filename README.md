@@ -2,8 +2,8 @@
 An extenstion to the [epics2kafka](https://github.com/JeffersonLab/epics2kafka) Kafka Connector that adds a [Transform](https://kafka.apache.org/documentation.html#connect_transforms) plugin to serialize messages in the format required by [JAWS](https://github.com/JeffersonLab/jaws).
 
 ---
-- [Overview](https://github.com/JeffersonLab/jaws-epics2kafkas#overview)
-- [Usage](https://github.com/JeffersonLab/jaws-epics2kafkas#usage)
+- [Overview](https://github.com/JeffersonLab/jaws-epics2kafka#overview)
+- [Usage](https://github.com/JeffersonLab/jaws-epics2kafka#usage)
   - [Quick Start with Compose](https://github.com/JeffersonLab/jaws-epics2kafka#quick-start-with-compose)
   - [Install](https://github.com/JeffersonLab/jaws-epics2kafka#install)
 - [Configure](https://github.com/JeffersonLab/jaws-epics2kafka#configure)  
