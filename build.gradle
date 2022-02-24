@@ -8,7 +8,7 @@ description "JLab Kafka Connect transform from epics2kafka to JAWS"
 group 'org.jlab'
 version '2.2.0'
 
-compileJava {
+tasks.withType(JavaCompile) {
     options.release = 8
     options.encoding = 'UTF-8'
     options.compilerArgs << "-Xlint:unchecked" << "-Xlint:deprecation"
