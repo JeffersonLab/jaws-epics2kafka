@@ -16,7 +16,7 @@ import java.util.Map;
 import static org.junit.Assert.*;
 
 public class EpicsToAlarmValueTest {
-    private EpicsToAlarm<SourceRecord> xform = new EpicsToAlarm.Value<>();
+    private final EpicsToAlarm<SourceRecord> xform = new EpicsToAlarm.Value<>();
 
     public final Schema INPUT_VALUE_SCHEMA = SchemaBuilder.struct()
             .name("org.jlab.kafka.connect.EPICS_CA_DBR").version(1).doc("An EPICS Channel Access (CA) Time Database Record (DBR) MonitorEvent value")
