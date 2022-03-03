@@ -3,9 +3,8 @@ An extenstion to the [epics2kafka](https://github.com/JeffersonLab/epics2kafka) 
 
 ---
 - [Overview](https://github.com/JeffersonLab/jaws-epics2kafka#overview)
-- [Usage](https://github.com/JeffersonLab/jaws-epics2kafka#usage)
-  - [Quick Start with Compose](https://github.com/JeffersonLab/jaws-epics2kafka#quick-start-with-compose)
-  - [Install](https://github.com/JeffersonLab/jaws-epics2kafka#install)
+- [Quick Start with Compose](https://github.com/JeffersonLab/jaws-epics2kafka#quick-start-with-compose)
+- [Install](https://github.com/JeffersonLab/jaws-epics2kafka#install)
 - [Configure](https://github.com/JeffersonLab/jaws-epics2kafka#configure)  
 - [Build](https://github.com/JeffersonLab/jaws-epics2kafka#build)
 ---
@@ -17,9 +16,7 @@ The following transformation is performed:
 
 **Note**: epics2kafka must be configured to use the optional _outkey_ field to ensure the alarm name is used as the key and not the channel name, which is the default.  The [registrations2epics](https://github.com/JeffersonLab/registrations2epics) app handles this.
 
-## Usage
-
-### Quick Start with Compose 
+## Quick Start with Compose 
 1. Grab project
 ```
 git clone https://github.com/JeffersonLab/jaws-epics2kafka
@@ -40,7 +37,7 @@ docker exec -it jaws /scripts/client/list-activations.py --export
 
 See: [Docker Compose Strategy](https://gist.github.com/slominskir/a7da801e8259f5974c978f9c3091d52c)
 
-### Install
+## Install
 Copy the jaws-epics2kafka.jar file into a subdirectory of the Kafka plugins directory.  For example:
 ```
 mkdir /opt/kafka/plugins/jaws-epics2kafka
