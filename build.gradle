@@ -29,6 +29,10 @@ dependencies {
     testImplementation 'junit:junit:4.12'
 }
 
+build {
+    dependsOn(installDist)
+}
+
 distributions {
     main {
         contents {
