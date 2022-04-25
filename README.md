@@ -28,7 +28,7 @@ docker compose up
 ```
 3. Monitor the alarm-activations topic
 ```
-docker exec -it jaws /scripts/client/list_activations.py --export
+docker exec -it jaws /scripts/client/list_activations.py --monitor
 ```
 4. Trip an alarm
 ```
