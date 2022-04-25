@@ -143,18 +143,31 @@ public abstract class EpicsToAlarm<R extends ConnectRecord<R>> implements Transf
         protected Map<String, Object> doUpdate(Map<String, Object> original) {
             Map<String, Object> updated = new HashMap<>();
             Map<String, Object> msg = new HashMap<>();
-            Map<String, Object> epicsMap = new HashMap<>();
 
-            byte severity = (byte)original.get("severity");
-            byte status = (byte)original.get("status");
+            String error = (String)original.get("error");
 
-            String sevrStr = sevrByOrder[severity].name();
-            String statStr = statByOrder[status].name();
+            if(error != null) {
+                Map<String, Object> errorMap = new HashMap<>();
 
-            epicsMap.put("sevr", sevrStr);
-            epicsMap.put("stat", statStr);
+                errorMap.put("error", error);
 
-            msg.put("org.jlab.jaws.entity.EPICSAlarming", epicsMap);
+                msg.put("org.jlab.jaws.entity.ChannelError", errorMap);
+
+            } else {
+                Map<String, Object> epicsMap = new HashMap<>();
+
+                byte severity = (byte) original.get("severity");
+                byte status = (byte) original.get("status");
+
+                String sevrStr = sevrByOrder[severity].name();
+                String statStr = statByOrder[status].name();
+
+                epicsMap.put("sevr", sevrStr);
+                epicsMap.put("stat", statStr);
+
+                msg.put("org.jlab.jaws.entity.EPICSAlarming", epicsMap);
+            }
+
             updated.put("msg", msg);
 
             return updated;
@@ -164,18 +177,30 @@ public abstract class EpicsToAlarm<R extends ConnectRecord<R>> implements Transf
             Struct updated = new Struct(updatedSchema);
             Struct msg = new Struct(updatedSchema.field("msg").schema());
 
-            Struct epicsStruct = new Struct(msg.schema().fields().get(2).schema());
+            String error = original.getString("error");
 
-            byte severity = original.getInt8("severity");
-            byte status = original.getInt8("status");
+            if(error != null) {
+                Struct errorStruct = new Struct(msg.schema().fields().get(3).schema());
 
-            String sevrStr = sevrByOrder[severity].name();
-            String statStr = statByOrder[status].name();
+                errorStruct.put("error", error);
 
-            epicsStruct.put("sevr", sevrStr);
-            epicsStruct.put("stat", statStr);
+                msg.put("org.jlab.jaws.entity.ChannelError", errorStruct);
+            } else {
 
-            msg.put("org.jlab.jaws.entity.EPICSAlarming", epicsStruct);
+                Struct epicsStruct = new Struct(msg.schema().fields().get(2).schema());
+
+                byte severity = original.getInt8("severity");
+                byte status = original.getInt8("status");
+
+                String sevrStr = sevrByOrder[severity].name();
+                String statStr = statByOrder[status].name();
+
+                epicsStruct.put("sevr", sevrStr);
+                epicsStruct.put("stat", statStr);
+
+                msg.put("org.jlab.jaws.entity.EPICSAlarming", epicsStruct);
+            }
+
             updated.put("msg", msg);
 
             return updated;

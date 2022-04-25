@@ -23,10 +23,10 @@ repositories {
 
 dependencies {
     implementation 'org.apache.kafka:connect-transforms:3.0.0',
-            'org.apache.avro:avro:1.10.2',
+            'org.apache.avro:avro:1.11.0',
             'io.confluent:kafka-connect-avro-data:7.0.1',
-            'org.jlab:jaws-libj:1.9.0'
-    testImplementation 'junit:junit:4.12'
+            'org.jlab:jaws-libj:4.0.0'
+    testImplementation 'junit:junit:4.13.2'
 }
 
 build {
