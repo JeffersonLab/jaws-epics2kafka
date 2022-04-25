@@ -12,7 +12,7 @@ An extenstion to the [epics2kafka](https://github.com/JeffersonLab/epics2kafka) 
 ## Overview
 The following transformation is performed:
 
-**Value**: [epics-monitor-event-value](https://github.com/JeffersonLab/epics2kafka/blob/master/src/main/java/org/jlab/kafka/connect/CASourceTask.java#L42-L54) -> [AlarmActivationUnion.avsc](https://github.com/JeffersonLab/jaws-libj/blob/main/src/main/avro/AlarmActivationUnion.avsc)
+**Value**: [epics-monitor-event-value](https://github.com/JeffersonLab/epics2kafka/blob/2e30d5bcbadfc5e891999b18f170e4d8b243bbf2/src/main/java/org/jlab/kafka/connect/CASourceTask.java#L50-L61) -> [AlarmActivationUnion.avsc](https://github.com/JeffersonLab/jaws-libj/blob/main/src/main/avro/AlarmActivationUnion.avsc)
 
 **Note**: epics2kafka must be configured to use the optional _outkey_ field to ensure the alarm name is used as the key and not the channel name, which is the default.  The [registrations2epics](https://github.com/JeffersonLab/registrations2epics) app handles this.
 
