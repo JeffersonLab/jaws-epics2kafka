@@ -1,5 +1,5 @@
 ARG BUILD_IMAGE=gradle:7.4-jdk17-alpine
-ARG RUN_IMAGE=slominskir/epics2kafka:1.4.0
+ARG RUN_IMAGE=slominskir/epics2kafka:1.6.0
 
 ################## Stage 0
 FROM ${BUILD_IMAGE} as builder
