@@ -97,6 +97,42 @@ public class EpicsToAlarmValueTest {
         assertEquals(EpicsToAlarm.statByOrder[(byte)3].name(), msg.getStruct("org.jlab.jaws.entity.EPICSAlarming").getString("stat"));
     }
 
+    @Test
+    public void errorSchemaless() {
+        Map<String, Object> value = new HashMap<>();
+
+        String error = "Disconnected";
+
+        value.put("error", error);
+
+        final SourceRecord record = new SourceRecord(null, null, null, null, null, null, value);
+        final SourceRecord transformed = xform.apply(record);
+
+        Map transformedValue = (Map)transformed.value();
+
+        Map msg = (Map)transformedValue.get("msg");
+
+        assertEquals(error, ((Map)msg.get("org.jlab.jaws.entity.ChannelError")).get("error"));
+    }
+
+    @Test
+    public void errorWithSchema() {
+        final Struct value = new Struct(INPUT_VALUE_SCHEMA);
+
+        String error = "Disconnected";
+
+        value.put("error", error);
+
+        final SourceRecord record = new SourceRecord(null, null, null, null, null, INPUT_VALUE_SCHEMA, value);
+        final SourceRecord transformed = xform.apply(record);
+
+        Struct transformedValue = (Struct)transformed.value();
+
+        Struct msg = transformedValue.getStruct("msg");
+
+        assertEquals(error, msg.getStruct("org.jlab.jaws.entity.ChannelError").getString("error"));
+    }
+
     //@Test
     public void connectSchemaToAvroSchema() {
         AvroData outputData = new AvroData(new AvroDataConfig.Builder()
