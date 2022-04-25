@@ -26,14 +26,19 @@ cd jaws-epics2kafka
 ```
 docker compose up
 ```
-3. Trip an alarm
+3. Monitor the alarm-activations topic
+```
+docker exec -it jaws /scripts/client/list_activations.py --export
+```
+4. Trip an alarm
 ```
 docker exec softioc caput channel1 1
 ```
-4. Verify that the alarm-activations topic received a properly formatted message 
+5. Request invalid PV to verify error is provided
 ```
-docker exec -it jaws /scripts/client/list-activations.py --export
+docker exec epics2kafka /scripts/set-monitored.sh -t alarm-activations -c invalid_pv -m va
 ```
+
 
 See: [Docker Compose Strategy](https://gist.github.com/slominskir/a7da801e8259f5974c978f9c3091d52c)
 
