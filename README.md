@@ -34,9 +34,9 @@ docker exec -it jaws /scripts/client/list_activations.py --export
 ```
 docker exec softioc caput channel1 1
 ```
-5. Request invalid PV to verify error is provided
+5. Request invalid channel to verify error is provided
 ```
-docker exec epics2kafka /scripts/set-monitored.sh -t alarm-activations -c invalid_pv -m va
+docker exec epics2kafka /scripts/set-monitored.sh -t alarm-activations -c invalid_channel -m va
 ```
 
 
