@@ -6,10 +6,10 @@ plugins {
 
 description "JLab Kafka Connect transform from epics2kafka to JAWS"
 group 'org.jlab'
-version '4.0.0'
+version '4.1.0'
 
 tasks.withType(JavaCompile) {
-    options.release = 8
+    options.release = 11
     options.encoding = 'UTF-8'
     options.compilerArgs << "-Xlint:unchecked" << "-Xlint:deprecation"
 }
@@ -22,10 +22,10 @@ repositories {
 }
 
 dependencies {
-    implementation 'org.apache.kafka:connect-transforms:3.0.0',
+    implementation 'org.apache.kafka:connect-transforms:3.1.0',
             'org.apache.avro:avro:1.11.0',
-            'io.confluent:kafka-connect-avro-data:7.0.1',
-            'org.jlab:jaws-libj:4.0.0'
+            'io.confluent:kafka-connect-avro-data:7.1.1',
+            'org.jlab:jaws-libj:4.1.0'
     testImplementation 'junit:junit:4.13.2'
 }
 
