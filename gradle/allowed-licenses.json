@@ -1,0 +1,22 @@
+{
+  "allowedLicenses": [
+    {
+      "moduleLicense": "Apache License, Version 2.0"
+    },
+    {
+      "moduleLicense": "Eclipse Public License - v 2.0"
+    },
+    {
+      "moduleLicense": "The 2-Clause BSD License"
+    },
+    {
+      "moduleLicense": "MIT License"
+    },
+    {
+      "moduleName": "com.fasterxml.jackson:jackson-bom"
+    },
+    {
+      "moduleName": "org.slf4j:slf4j-log4j12"
+    }
+  ]
+}

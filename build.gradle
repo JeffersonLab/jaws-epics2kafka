@@ -1,7 +1,10 @@
+import com.github.jk1.license.filter.*
+
 plugins {
     id 'java-library'
     id 'maven-publish'
-    id 'distribution'
+    id 'java-library-distribution'
+    id 'com.github.jk1.dependency-license-report' version '2.0'
 }
 
 description "JLab Kafka Connect transform from epics2kafka to JAWS"
@@ -33,13 +36,16 @@ build {
     dependsOn(installDist)
 }
 
+installDist.dependsOn(generateLicenseReport)
+distTar.dependsOn(generateLicenseReport)
+distZip.dependsOn(generateLicenseReport)
+
 distributions {
     main {
         contents {
-            from jar
-            from(configurations.runtimeClasspath)
-            include 'jaws-epics2kafka-*'
-            include 'jaws-libj-*'
+            from("build/reports/dependency-license") {
+                into "dependency-license"
+            }
         }
     }
 }
@@ -87,4 +93,24 @@ publishing {
             }
         }
     }
+}
+
+tasks.named('jar') {
+    manifest {
+        attributes('Implementation-Title': project.name,
+                'Implementation-Version': project.version)
+    }
+}
+
+jar {
+    from ('./') {
+        include 'LICENSE'
+        into 'META-INF'
+    }
+}
+
+licenseReport {
+    filters = [new LicenseBundleNormalizer()]
+    excludeOwnGroup = false
+    allowedLicensesFile = new File("$projectDir/gradle/allowed-licenses.json")
 }
