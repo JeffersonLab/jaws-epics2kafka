@@ -48,7 +48,16 @@ Copy the jaws-epics2kafka.jar file into a subdirectory of the Kafka plugins dire
 mkdir /opt/kafka/plugins/jaws-epics2kafka
 cp jaws-epics2kafka.jar /opt/kafka/plugins/jaws-epics2kafka
 ```
-**Note**: You'll also need to ensure the plugin has access to it's dependencies.   Specifically you'll need to copy the _jaws-libj.jar_ file into the _plugins/jaws-epics2kafka_ directory as well.   You might even need to setup a symbolic link inside the same directory (perhaps named "deps") pointing to the _/usr/share/java/kafka-serdes-tools_ directory or equivalent such that Confluent AVRO and Schema Registry depdnences are resolved (depends on what is part of the core Kafka install).
+**Note**: You'll also need to ensure the plugin has access to it's dependencies by either copying them into the kafka lib directory OR the plugin subdirectory `jaws-epics2kafka`.  This is a little tricky since many of the indirect dependencies are already installed in kafka lib (log4j, slf4j, jackson).   You can simply copy the contents of release zip lib directory (created by `gradle installDist`) into the plugin subdirectory, as the overlap doesn't appear to be a problem.  Else you can cherry pick the following from it if you're trying to minimize duplicate jars:
+- jaws-libj
+- kafka-common
+- avro
+- kafka-connect-avro-data
+- kafka-schema-registry-client
+- kafka-schema-serializer
+- kafka-clients
+- kafka-avro-serializer
+- common-utils
 
 ## Configure
 The Connect configuration (JSON):
