@@ -43,21 +43,31 @@ docker exec epics2kafka /scripts/set-monitored.sh -t alarm-activations -c invali
 See: [Docker Compose Strategy](https://gist.github.com/slominskir/a7da801e8259f5974c978f9c3091d52c)
 
 ## Install
-Copy the jaws-epics2kafka.jar file into a subdirectory of the Kafka plugins directory.  For example:
+Copy the jaws-epics2kafka.jar and it's core direct dependencies into a subdirectory of the Kafka plugins directory.  For example:
 ```
 mkdir /opt/kafka/plugins/jaws-epics2kafka
-cp jaws-epics2kafka.jar /opt/kafka/plugins/jaws-epics2kafka
+cp jaws-epics2kafka*.jar /opt/kafka/plugins/jaws-epics2kafka
+cp jaws-libj*.jar /opt/kafka/plugins/jaws-epics2kafka
+cp kafka-common*.jar /opt/kafka/plugins/jaws-epics2kafka
 ```
-**Note**: You'll also need to ensure the plugin has access to it's dependencies by either copying them into the kafka lib directory OR the plugin subdirectory `jaws-epics2kafka`.  This is a little tricky since many of the indirect dependencies are already installed in kafka lib (log4j, slf4j, jackson).   You can simply copy the contents of release zip lib directory (created by `gradle installDist`) into the plugin subdirectory, as the overlap doesn't appear to be a problem.  Else you can cherry pick the following from it if you're trying to minimize duplicate jars:
-- jaws-libj
-- kafka-common
-- avro
-- kafka-connect-avro-data
-- kafka-schema-registry-client
-- kafka-schema-serializer
-- kafka-clients
-- kafka-avro-serializer
-- common-utils
+**Note**: The `epics2kafka*.jar` should be in a separate plugins subdirectory from jaws-epics2kafka.  Since they share kafka-common*.jar it's likely safest to remove that jar from each plugin subdirectory and move it to kafka/libs.
+
+You'll also need to ensure the plugin has access to it's platform dependencies: Confluent Kafka. Many are already in the kafka libs directory, but AVRO and Confluent AVRO/Registry related dependencies must be copied into Kafka libs (if you're not already using a Confluent distribution of Kafka). This is a little tricky since many of the indirect dependencies are already installed in kafka lib (log4j, slf4j, jackson).   The easiest way is to download the Confluent Community Edition and cherry pick a few jars out of it.  If you have Kafka installed at /opt/kafka and you want confluent at /opt/confluent then the steps would be:
+```
+wget http://packages.confluent.io/archive/7.1/confluent-community-7.1.1.zip
+unzip -d /opt/confluent confluent-community-7.1.1.zip
+cd /opt/confluent
+mv confluent-7.1.1 7.1.1
+cp /opt/confluent/7.1.1/share/java/confluent-common/common-utils-7.1.1.jar /opt/kafka/libs/
+cp /opt/confluent/7.1.1/share/java/confluent-common/common-config-7.1.1.jar /opt/kafka/libs/
+cp /opt/confluent/7.1.1/share/java/kafka-serde-tools/kafka-avro-serializer-7.1.1.jar /opt/kafka/libs/
+cp /opt/confluent/7.1.1/share/java/kafka-serde-tools/kafka-connect-avro-data-7.1.1.jar /opt/kafka/libs
+cp /opt/confluent/7.1.1/share/java/kafka-serde-tools/kafka-connect-avro-converter-7.1.1.jar /opt/kafka/libs
+cp /opt/confluent/7.1.1/share/java/kafka-serde-tools/kafka-schema-serializer-7.1.1.jar /opt/kafka/libs
+cp /opt/confluent/7.1.1/share/java/kafka-serde-tools/kafka-schema-registry-client-7.1.1.jar /opt/kafka/libs
+cp /opt/confluent/7.1.1/share/java/kafka-serde-tools/avro-1.11.0.jar /opt/kafka/libs
+cp /opt/confluent/7.1.1/share/java/kafka-serde-tools/guava-30.1.1-jre.jar /opt/kafka/libs
+```
 
 ## Configure
 The Connect configuration (JSON):
