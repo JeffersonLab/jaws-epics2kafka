@@ -52,7 +52,7 @@ cp kafka-common*.jar /opt/kafka/plugins/jaws-epics2kafka
 ```
 **Note**: The `epics2kafka*.jar` should be in a separate plugins subdirectory from jaws-epics2kafka.  Since they share kafka-common*.jar it's likely safest to remove that jar from each plugin subdirectory and move it to kafka/libs.
 
-You'll also need to ensure the plugin has access to it's platform dependencies: Confluent Kafka. Many are already in the kafka libs directory, but AVRO and Confluent AVRO/Registry related dependencies must be copied into Kafka libs (if you're not already using a Confluent distribution of Kafka). This is a little tricky since many of the indirect dependencies are already installed in kafka lib (log4j, slf4j, jackson).   The easiest way is to download the Confluent Community Edition and cherry pick a few jars out of it.  If you have Kafka installed at /opt/kafka and you want confluent at /opt/confluent then the steps would be:
+You'll also need to ensure the plugin has access to it's platform dependencies: Confluent Kafka. Many are already in the kafka libs directory, but AVRO and Confluent AVRO/Registry related dependencies must be copied into Kafka libs (if you're not already using a Confluent distribution of Kafka).  The easiest way is to download the Confluent Community Edition and cherry pick a few jars out of it.  If you have Kafka installed at /opt/kafka and you want confluent at /opt/confluent then the steps would be:
 ```
 wget http://packages.confluent.io/archive/7.1/confluent-community-7.1.1.zip
 unzip -d /opt/confluent confluent-community-7.1.1.zip
