@@ -3,7 +3,7 @@ import com.github.jk1.license.filter.*
 plugins {
     id 'java-library'
     id 'maven-publish'
-    id 'java-library-distribution'
+    id 'distribution'
     id 'com.github.jk1.dependency-license-report' version '2.0'
 }
 
@@ -47,8 +47,14 @@ distZip.dependsOn(generateLicenseReport)
 distributions {
     main {
         contents {
-            from("build/reports/dependency-license") {
-                into "dependency-license"
+            from jar
+
+            /*We only include jars not already provided in Kafka/libs dir (or should be in kafka/libs)*/
+            /*Example, we exclude log4j, slf4j, jackson, kafka, avro, confluent */
+            from (project.configurations.runtimeClasspath).with {
+                include('jaws-epics2kafka*')
+                include('kafka-common*')
+                include('jaws-libj*')
             }
         }
     }
