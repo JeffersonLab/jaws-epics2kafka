@@ -236,6 +236,9 @@ public abstract class EpicsToAlarm<R extends ConnectRecord<R>> implements Transf
 
         @Override
         protected R newRecord(R record, Schema updatedSchema, Object updatedValue) {
+            if(updatedValue == null) {
+                updatedSchema = null; // Otherwise Schema must be union including null
+            }
             return record.newRecord(record.topic(), record.kafkaPartition(), record.keySchema(), record.key(), updatedSchema, updatedValue, record.timestamp(), headers);
         }
     }
