@@ -142,7 +142,7 @@ public abstract class EpicsToAlarm<R extends ConnectRecord<R>> implements Transf
 
         protected Map<String, Object> doUpdate(Map<String, Object> original) {
             Map<String, Object> updated = null;
-            Map<String, Object> msg = new HashMap<>();
+            Map<String, Object> union = new HashMap<>();
             boolean alarm = true;
 
             String error = (String)original.get("error");
@@ -152,7 +152,7 @@ public abstract class EpicsToAlarm<R extends ConnectRecord<R>> implements Transf
 
                 errorMap.put("error", error);
 
-                msg.put("org.jlab.jaws.entity.ChannelError", errorMap);
+                union.put("org.jlab.jaws.entity.ChannelErrorActivation", errorMap);
 
             } else {
                 Map<String, Object> epicsMap = new HashMap<>();
@@ -170,13 +170,13 @@ public abstract class EpicsToAlarm<R extends ConnectRecord<R>> implements Transf
                     epicsMap.put("sevr", sevrStr);
                     epicsMap.put("stat", statStr);
 
-                    msg.put("org.jlab.jaws.entity.EPICSAlarming", epicsMap);
+                    union.put("org.jlab.jaws.entity.EPICSActivation", epicsMap);
                 }
             }
 
             if(alarm) {
                 updated = new HashMap<>();
-                updated.put("msg", msg);
+                updated.put("union", union);
             }
 
             return updated;
@@ -184,20 +184,20 @@ public abstract class EpicsToAlarm<R extends ConnectRecord<R>> implements Transf
 
         protected Struct doUpdate(Struct original, Schema updatedSchema) {
             Struct updated = null;
-            Struct msg = new Struct(updatedSchema.field("msg").schema());
+            Struct union = new Struct(updatedSchema.field("union").schema());
             boolean alarm = true;
 
             String error = original.getString("error");
 
             if(error != null) {
-                Struct errorStruct = new Struct(msg.schema().fields().get(3).schema());
+                Struct errorStruct = new Struct(union.schema().fields().get(3).schema());
 
                 errorStruct.put("error", error);
 
-                msg.put("org.jlab.jaws.entity.ChannelError", errorStruct);
+                union.put("org.jlab.jaws.entity.ChannelErrorActivation", errorStruct);
             } else {
 
-                Struct epicsStruct = new Struct(msg.schema().fields().get(2).schema());
+                Struct epicsStruct = new Struct(union.schema().fields().get(2).schema());
 
                 byte status = original.getInt8("status");
                 StatEnum stat = statByOrder[status];
@@ -212,13 +212,13 @@ public abstract class EpicsToAlarm<R extends ConnectRecord<R>> implements Transf
                     epicsStruct.put("sevr", sevrStr);
                     epicsStruct.put("stat", statStr);
 
-                    msg.put("org.jlab.jaws.entity.EPICSAlarming", epicsStruct);
+                    union.put("org.jlab.jaws.entity.EPICSActivation", epicsStruct);
                 }
             }
 
             if(alarm) {
                 updated = new Struct(updatedSchema);
-                updated.put("msg", msg);
+                updated.put("union", union);
             }
 
             return updated;

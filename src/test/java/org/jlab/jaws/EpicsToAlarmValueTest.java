@@ -73,10 +73,10 @@ public class EpicsToAlarmValueTest {
 
         Map transformedValue = (Map)transformed.value();
 
-        Map msg = (Map)transformedValue.get("msg");
+        Map msg = (Map)transformedValue.get("union");
 
-        assertEquals(EpicsToAlarm.sevrByOrder[(byte)2].name(), ((Map)msg.get("org.jlab.jaws.entity.EPICSAlarming")).get("sevr"));
-        assertEquals(EpicsToAlarm.statByOrder[(byte)3].name(), ((Map)msg.get("org.jlab.jaws.entity.EPICSAlarming")).get("stat"));
+        assertEquals(EpicsToAlarm.sevrByOrder[(byte)2].name(), ((Map)msg.get("org.jlab.jaws.entity.EPICSActivation")).get("sevr"));
+        assertEquals(EpicsToAlarm.statByOrder[(byte)3].name(), ((Map)msg.get("org.jlab.jaws.entity.EPICSActivation")).get("stat"));
     }
 
     @Test
@@ -91,10 +91,10 @@ public class EpicsToAlarmValueTest {
 
         Struct transformedValue = (Struct)transformed.value();
 
-        Struct msg = transformedValue.getStruct("msg");
+        Struct msg = transformedValue.getStruct("union");
 
-        assertEquals(EpicsToAlarm.sevrByOrder[(byte)2].name(), msg.getStruct("org.jlab.jaws.entity.EPICSAlarming").getString("sevr"));
-        assertEquals(EpicsToAlarm.statByOrder[(byte)3].name(), msg.getStruct("org.jlab.jaws.entity.EPICSAlarming").getString("stat"));
+        assertEquals(EpicsToAlarm.sevrByOrder[(byte)2].name(), msg.getStruct("org.jlab.jaws.entity.EPICSActivation").getString("sevr"));
+        assertEquals(EpicsToAlarm.statByOrder[(byte)3].name(), msg.getStruct("org.jlab.jaws.entity.EPICSActivation").getString("stat"));
     }
 
     @Test
@@ -140,9 +140,9 @@ public class EpicsToAlarmValueTest {
 
         Map transformedValue = (Map)transformed.value();
 
-        Map msg = (Map)transformedValue.get("msg");
+        Map msg = (Map)transformedValue.get("union");
 
-        assertEquals(error, ((Map)msg.get("org.jlab.jaws.entity.ChannelError")).get("error"));
+        assertEquals(error, ((Map)msg.get("org.jlab.jaws.entity.ChannelErrorActivation")).get("error"));
     }
 
     @Test
@@ -158,9 +158,9 @@ public class EpicsToAlarmValueTest {
 
         Struct transformedValue = (Struct)transformed.value();
 
-        Struct msg = transformedValue.getStruct("msg");
+        Struct msg = transformedValue.getStruct("union");
 
-        assertEquals(error, msg.getStruct("org.jlab.jaws.entity.ChannelError").getString("error"));
+        assertEquals(error, msg.getStruct("org.jlab.jaws.entity.ChannelErrorActivation").getString("error"));
     }
 
     //@Test
