@@ -30,7 +30,17 @@ public abstract class EpicsToAlarm<R extends ConnectRecord<R>> implements Transf
     public static final String OVERVIEW_DOC =
             "Transform epics2kafka messages to JAWS format";
 
-    public static final SevrEnum[] sevrByOrder = SevrEnum.values();
+    public static final SevrEnum[] sevrByOrder = new SevrEnum[4];
+
+    // We removed NO_ALARM since it cannot exist downstream as it's replaced with either a tombstone or NoActivation
+    // marker.  However, incoming records have it, so we can no longer simply assign SevrEnum.values() as is done
+    // with StateEnum.
+    static {
+        sevrByOrder[0] = null; // NO_ALARM
+        sevrByOrder[1] = SevrEnum.MINOR;
+        sevrByOrder[2] = SevrEnum.MAJOR;
+        sevrByOrder[3] = SevrEnum.INVALID;
+    }
     public static final StatEnum[] statByOrder = StatEnum.values();
 
     public static final ConfigDef CONFIG_DEF = new ConfigDef();
