@@ -44,6 +44,8 @@ public abstract class EpicsToAlarm<R extends ConnectRecord<R>> implements Transf
 
     static final Schema updatedValueSchema = inputData.toConnectSchema(AlarmActivationUnion.getClassSchema());
 
+    static boolean USE_NO_ACTIVATION = !"false".equals(System.getenv("USE_NO_ACTIVATION"));
+
     final ConnectHeaders headers = new ConnectHeaders();
 
     {
@@ -64,6 +66,32 @@ public abstract class EpicsToAlarm<R extends ConnectRecord<R>> implements Transf
         headers.addString("user", user);
         headers.addString("host", hostname);
         headers.addString("producer", "jaws-epics2kafka");
+    }
+
+    /**
+     * This transform can either use tombstones to indicate no activation or use the NoActivation marker entity.
+     *
+     * The USE_NO_ACTIVATION environment variable is consulted and unless the value == "false", the default is to use
+     * the NoActivation marker.
+     *
+     * The advantage of the marker is that it can be aggressively compacted and maintains the number of messages in the
+     * topic at roughly equal to the number of registered alarms IF aggressive compaction is configured.  The downside
+     * is the number of messages can never be less than registered alarms.   Best for workloads with spontaneous
+     * nuisance alarms.
+     *
+     * The advantage of the tombstone is that in well-behaved alarm systems (few nuisance alarms), the number of
+     * messages in the alarm-activations topic can be quite low.   The disadvantage is that tombstones cannot be
+     * compacted and only expire based on delete.retention.ms, which means if you have a lot of toggling alarms
+     * (nuisance alarms), then they are only cleaned up based on delete.retention.ms, which may need to be quite long
+     * since that effectively caps the amount of time that can elapse before a materialized view must check for updates
+     * so that it can incrementally catch-up to the latest state, otherwise the view must be entirely rebuilt from
+     * scratch (re-query entire topic) to avoid missing deleted tombstones (compaction keeps the latest state of a topic
+     * EXCEPT tombstones).
+     *
+     * @param useNoActivation true to use NoActivation marker, false to use tombstone (null)
+     */
+    public static void setUseNoActivation(boolean useNoActivation) {
+        USE_NO_ACTIVATION = useNoActivation;
     }
 
     /**
@@ -174,7 +202,11 @@ public abstract class EpicsToAlarm<R extends ConnectRecord<R>> implements Transf
                 }
             }
 
-            if(alarm) {
+            if(!alarm && USE_NO_ACTIVATION) {
+                union.put("org.jlab.jaws.entity.NoActivation", new HashMap<>());
+            }
+
+            if(alarm || USE_NO_ACTIVATION) {
                 updated = new HashMap<>();
                 updated.put("union", union);
             }
@@ -216,7 +248,12 @@ public abstract class EpicsToAlarm<R extends ConnectRecord<R>> implements Transf
                 }
             }
 
-            if(alarm) {
+            if(!alarm && USE_NO_ACTIVATION) {
+                union.put("org.jlab.jaws.entity.NoActivation",
+                        new Struct(union.schema().fields().get(4).schema()));
+            }
+
+            if(alarm || USE_NO_ACTIVATION) {
                 updated = new Struct(updatedSchema);
                 updated.put("union", union);
             }

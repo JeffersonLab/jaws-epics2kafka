@@ -98,7 +98,31 @@ public class EpicsToAlarmValueTest {
     }
 
     @Test
-    public void noAlarmSchemaless() {
+    public void noActivationTombstoneSchemaless() {
+        Map<String, Object> value = new HashMap<>();
+
+        value.put("severity", (byte)0);
+        value.put("status", (byte)0);
+
+
+        final SourceRecord record = new SourceRecord(null, null, null, null, null, null, value);
+        SourceRecord transformed;
+
+        try {
+            EpicsToAlarm.setUseNoActivation(false);
+            transformed = xform.apply(record);
+        } finally {
+            EpicsToAlarm.setUseNoActivation(true);
+        }
+
+
+        Map transformedValue = (Map)transformed.value();
+
+        assertNull(transformedValue);
+    }
+
+    @Test
+    public void noActivationMarkerSchemaless() {
         Map<String, Object> value = new HashMap<>();
 
         value.put("severity", (byte)0);
@@ -109,11 +133,35 @@ public class EpicsToAlarmValueTest {
 
         Map transformedValue = (Map)transformed.value();
 
+        Map union = (Map)transformedValue.get("union");
+
+        assertTrue((Map)union.get("org.jlab.jaws.entity.NoActivation") instanceof Map);
+    }
+
+    @Test
+    public void noActivationTombstoneWithSchema() {
+        final Struct value = new Struct(INPUT_VALUE_SCHEMA);
+
+        value.put("severity", (byte)0);
+        value.put("status", (byte)0);
+
+        final SourceRecord record = new SourceRecord(null, null, null, null, null, INPUT_VALUE_SCHEMA, value);
+        SourceRecord transformed;
+
+        try {
+            EpicsToAlarm.setUseNoActivation(false);
+            transformed = xform.apply(record);
+        } finally {
+            EpicsToAlarm.setUseNoActivation(true);
+        }
+
+        Struct transformedValue = (Struct)transformed.value();
+
         assertNull(transformedValue);
     }
 
     @Test
-    public void noAlarmWithSchema() {
+    public void noActivationMarkerWithSchema() {
         final Struct value = new Struct(INPUT_VALUE_SCHEMA);
 
         value.put("severity", (byte)0);
@@ -124,7 +172,9 @@ public class EpicsToAlarmValueTest {
 
         Struct transformedValue = (Struct)transformed.value();
 
-        assertNull(transformedValue);
+        Struct union = transformedValue.getStruct("union");
+
+        assertTrue(union.getStruct("org.jlab.jaws.entity.NoActivation") instanceof Struct);
     }
 
     @Test
@@ -140,9 +190,9 @@ public class EpicsToAlarmValueTest {
 
         Map transformedValue = (Map)transformed.value();
 
-        Map msg = (Map)transformedValue.get("union");
+        Map union = (Map)transformedValue.get("union");
 
-        assertEquals(error, ((Map)msg.get("org.jlab.jaws.entity.ChannelErrorActivation")).get("error"));
+        assertEquals(error, ((Map)union.get("org.jlab.jaws.entity.ChannelErrorActivation")).get("error"));
     }
 
     @Test
@@ -158,9 +208,9 @@ public class EpicsToAlarmValueTest {
 
         Struct transformedValue = (Struct)transformed.value();
 
-        Struct msg = transformedValue.getStruct("union");
+        Struct union = transformedValue.getStruct("union");
 
-        assertEquals(error, msg.getStruct("org.jlab.jaws.entity.ChannelErrorActivation").getString("error"));
+        assertEquals(error, union.getStruct("org.jlab.jaws.entity.ChannelErrorActivation").getString("error"));
     }
 
     //@Test
