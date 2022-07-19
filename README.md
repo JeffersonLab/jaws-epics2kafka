@@ -77,6 +77,8 @@ The Connect configuration (JSON):
     "transforms.alarmsValue.type": "org.jlab.jaws.EpicsToAlarm$Value
 ```
 
+Set the environment variable `USE_NO_ACTIVATION=false` (defaults to true) to replace [NoActivation](https://github.com/JeffersonLab/jaws-libp/blob/627b07af785723a399400f5e79a007d7bd6839eb/src/jaws_libp/avro/schemas/AlarmActivationUnion.avsc#L103-L108) messages with tombstones (null) instead. 
+
 ## Build
 This project is built with [Java 17](https://adoptium.net/) (compiled to Java 11 bytecode), and uses the [Gradle 7](https://gradle.org/) build tool to automatically download dependencies and build the project from source:
 
