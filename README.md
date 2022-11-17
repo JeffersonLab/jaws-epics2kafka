@@ -23,7 +23,7 @@ The following transformation is performed:
 git clone https://github.com/JeffersonLab/jaws-epics2kafka
 cd jaws-epics2kafka
 ```
-2. Launch Docker
+2. Launch [Compose](https://github.com/docker/compose)
 ```
 docker compose up
 ```
