@@ -31,6 +31,6 @@ RUN cd $KAFKA_HOME/libs  \
     && curl -O https://packages.confluent.io/maven/io/confluent/kafka-connect-avro-data/7.4.0/kafka-connect-avro-data-7.4.0.jar \
     && curl -O https://packages.confluent.io/maven/io/confluent/common-utils/7.4.0/common-utils-7.4.0.jar \
     && curl -O https://packages.confluent.io/maven/io/confluent/common-config/7.4.0/common-config-7.4.0.jar \
-    && curl -O https://repo1.maven.org/maven2/com/google/guava/guava/32.1.2-jre/guava-32.1.2-jre.jar
+    && curl -O https://repo1.maven.org/maven2/com/google/guava/guava/30.1.1-jre/guava-30.1.1-jre.jar \
+    && curl -O https://repo1.maven.org/maven2/com/google/guava/failureaccess/1.0.1/failureaccess-1.0.1.jar
 USER ${RUN_USER}
-
