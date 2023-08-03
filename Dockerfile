@@ -1,5 +1,6 @@
 ARG BUILD_IMAGE=gradle:7.4-jdk17-alpine
-ARG RUN_IMAGE=slominskir/epics2kafka:1.9.0
+ARG RUN_IMAGE=jeffersonlab/epics2kafka:2.0.0
+ARG CUSTOM_CRT_URL=http://pki.jlab.org/JLabCA.crt
 
 ################## Stage 0
 FROM ${BUILD_IMAGE} as builder
@@ -17,8 +18,19 @@ RUN cd /app && gradle build -x test --no-watch-fs $OPTIONAL_CERT_ARG
 
 ################## Stage 1
 FROM ${RUN_IMAGE} as runner
-ARG RUN_USER=kafka
+ARG RUN_USER=1001
 USER root
 COPY --from=builder /app/build/install $KAFKA_CONNECT_PLUGINS_DIR
+RUN cd $KAFKA_HOME/libs  \
+    && curl -O https://repo1.maven.org/maven2/org/apache/avro/avro/1.11.2/avro-1.11.2.jar \
+    && curl -O https://packages.confluent.io/maven/io/confluent/kafka-schema-registry-client/7.4.0/kafka-schema-registry-client-7.4.0.jar \
+    && curl -O https://packages.confluent.io/maven/io/confluent/kafka-schema-serializer/7.4.0/kafka-schema-serializer-7.4.0.jar \
+    && curl -O https://packages.confluent.io/maven/io/confluent/kafka-schema-converter/7.4.0/kafka-schema-converter-7.4.0.jar \
+    && curl -O https://packages.confluent.io/maven/io/confluent/kafka-avro-serializer/7.4.0/kafka-avro-serializer-7.4.0.jar \
+    && curl -O https://packages.confluent.io/maven/io/confluent/kafka-connect-avro-converter/7.4.0/kafka-connect-avro-converter-7.4.0.jar \
+    && curl -O https://packages.confluent.io/maven/io/confluent/kafka-connect-avro-data/7.4.0/kafka-connect-avro-data-7.4.0.jar \
+    && curl -O https://packages.confluent.io/maven/io/confluent/common-utils/7.4.0/common-utils-7.4.0.jar \
+    && curl -O https://packages.confluent.io/maven/io/confluent/common-config/7.4.0/common-config-7.4.0.jar \
+    && curl -O https://repo1.maven.org/maven2/com/google/guava/guava/32.1.2-jre/guava-32.1.2-jre.jar
 USER ${RUN_USER}
 

@@ -1,9 +1,4 @@
 services:
-  zookeeper:
-    extends:
-      file: deps.yml
-      service: zookeeper
-
   kafka:
     extends:
       file: deps.yml
@@ -24,12 +19,10 @@ services:
       file: deps.yml
       service: softioc
 
-
   epics2kafka:
     hostname: epics2kafka
     container_name: epics2kafka
     depends_on:
-      - zookeeper
       - kafka
       - softioc
     ports:

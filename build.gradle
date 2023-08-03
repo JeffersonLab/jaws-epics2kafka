@@ -29,10 +29,10 @@ configurations {
 }
 
 dependencies {
-    compileOnly 'org.apache.kafka:connect-transforms:3.1.0'
-    implementation 'org.apache.avro:avro:1.11.0',
-            'io.confluent:kafka-connect-avro-data:7.1.1',
-            'org.jlab:jaws-libj:4.4.0'
+    compileOnly 'org.apache.kafka:connect-transforms:3.5.0'
+    implementation 'org.apache.avro:avro:1.11.2',
+                   'io.confluent:kafka-connect-avro-data:7.4.0',
+                   'org.jlab:jaws-libj:4.6.0'
     testImplementation 'junit:junit:4.13.2'
 }
 

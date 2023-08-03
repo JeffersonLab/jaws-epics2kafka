@@ -1,9 +1,4 @@
 services:
-  zookeeper:
-    extends:
-      file: build.yml
-      service: zookeeper
-
   kafka:
     extends:
       file: build.yml
@@ -29,4 +24,4 @@ services:
       file: build.yml
       service: epics2kafka
     volumes:
-      - ./build/install:/kafka/connect/jaws-epics2kafka
+      - ./build/install:/plugins
