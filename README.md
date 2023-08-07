@@ -92,7 +92,7 @@ gradlew installDist
 **See**: [Docker Development Quick Reference](https://gist.github.com/slominskir/a7da801e8259f5974c978f9c3091d52c#development-quick-reference)
 
 ## Release
-1. Bump the version number in build.gradle and commit and push to GitHub (using [Semantic Versioning](https://semver.org/)).
-2. Create a new release on the GitHub Releases page corresponding to the same version in the build.gradle.   The release should enumerate changes and link issues.   A zip artifact generated from the gradle distZip target can be attached to the release to facilitate easy install by users.
-3. Build and publish a new Docker image [from the GitHub tag](https://gist.github.com/slominskir/a7da801e8259f5974c978f9c3091d52c#8-build-an-image-based-of-github-tag).
-4. Bump and commit quick start [image version](https://github.com/JeffersonLab/jaws-epics2kafka/blob/main/docker-compose.override.yml)
+1. Bump the version number in build.gradle and commit and push to GitHub (using [Semantic Versioning](https://semver.org/)).   
+1. Create a new release on the GitHub [Releases](https://github.com/JeffersonLab/jaws-epics2kafka/releases) page corresponding to same version in build.gradle (Enumerate changes and link issues). Run dist build and attach zip to release.
+1. [Publish to DockerHub](https://github.com/JeffersonLab/jaws-epics2kafka/actions/workflows/docker-publish.yml) GitHub Action should run automatically.
+1. Bump and commit quick start [image version](https://github.com/JeffersonLab/jaws-epics2kafka/blob/main/docker-compose.override.yml) after confirming new image works
