@@ -1,4 +1,4 @@
-# jaws-epics2kafka [![CI](https://github.com/JeffersonLab/jaws-epics2kafka/actions/workflows/ci.yml/badge.svg)](https://github.com/JeffersonLab/jaws-epics2kafka/actions/workflows/ci.yml) [![Docker](https://img.shields.io/docker/v/slominskir/jaws-epics2kafka?sort=semver&label=DockerHub)](https://hub.docker.com/r/slominskir/jaws-epics2kafka)
+# jaws-epics2kafka [![CI](https://github.com/JeffersonLab/jaws-epics2kafka/actions/workflows/ci.yml/badge.svg)](https://github.com/JeffersonLab/jaws-epics2kafka/actions/workflows/ci.yml) [![Docker](https://img.shields.io/docker/v/jeffersonlab/jaws-epics2kafka?sort=semver&label=DockerHub)](https://hub.docker.com/r/jeffersonlab/jaws-epics2kafka)
 An extenstion to the [epics2kafka](https://github.com/JeffersonLab/epics2kafka) Kafka Connector that adds a [Transform](https://kafka.apache.org/documentation.html#connect_transforms) plugin to serialize messages in the format required by [JAWS](https://github.com/JeffersonLab/jaws).
 
 ---
@@ -29,7 +29,7 @@ docker compose up
 ```
 3. Monitor the alarm-activations topic
 ```
-docker exec -it jaws /scripts/client/list_activations.py --monitor
+docker exec -it jaws list_activations --monitor
 ```
 4. Trip an alarm
 ```
@@ -53,21 +53,19 @@ cp kafka-common*.jar /opt/kafka/plugins/jaws-epics2kafka
 ```
 **Note**: The `epics2kafka*.jar` should be in a separate plugins subdirectory from jaws-epics2kafka.  Since they share kafka-common*.jar it's likely safest to remove that jar from each plugin subdirectory and move it to kafka/libs.
 
-You'll also need to ensure the plugin has access to it's platform dependencies: Confluent Kafka. Many are already in the kafka libs directory, but AVRO and Confluent AVRO/Registry related dependencies must be copied into Kafka libs (if you're not already using a Confluent distribution of Kafka).  The easiest way is to download the Confluent Community Edition and cherry pick a few jars out of it.  If you have Kafka installed at /opt/kafka and you want confluent at /opt/confluent then the steps would be:
+You'll also need to ensure the plugin has access to it's platform dependencies: Confluent Kafka. Many are already in the kafka libs directory, but AVRO and Confluent AVRO/Registry related dependencies must be copied into Kafka libs (if you're not already using a Confluent distribution of Kafka).  The easiest way may be to download the Confluent Community Edition and cherry pick a few jars out of it.  Else download each jar individually from Maven Central:
 ```
-wget http://packages.confluent.io/archive/7.1/confluent-community-7.1.1.zip
-unzip -d /opt/confluent confluent-community-7.1.1.zip
-cd /opt/confluent
-mv confluent-7.1.1 7.1.1
-cp /opt/confluent/7.1.1/share/java/confluent-common/common-utils-7.1.1.jar /opt/kafka/libs/
-cp /opt/confluent/7.1.1/share/java/confluent-common/common-config-7.1.1.jar /opt/kafka/libs/
-cp /opt/confluent/7.1.1/share/java/kafka-serde-tools/kafka-avro-serializer-7.1.1.jar /opt/kafka/libs/
-cp /opt/confluent/7.1.1/share/java/kafka-serde-tools/kafka-connect-avro-data-7.1.1.jar /opt/kafka/libs
-cp /opt/confluent/7.1.1/share/java/kafka-serde-tools/kafka-connect-avro-converter-7.1.1.jar /opt/kafka/libs
-cp /opt/confluent/7.1.1/share/java/kafka-serde-tools/kafka-schema-serializer-7.1.1.jar /opt/kafka/libs
-cp /opt/confluent/7.1.1/share/java/kafka-serde-tools/kafka-schema-registry-client-7.1.1.jar /opt/kafka/libs
-cp /opt/confluent/7.1.1/share/java/kafka-serde-tools/avro-1.11.0.jar /opt/kafka/libs
-cp /opt/confluent/7.1.1/share/java/kafka-serde-tools/guava-30.1.1-jre.jar /opt/kafka/libs
+curl -O https://repo1.maven.org/maven2/org/apache/avro/avro/1.11.2/avro-1.11.2.jar
+curl -O https://packages.confluent.io/maven/io/confluent/kafka-schema-registry-client/7.4.0/kafka-schema-registry-client-7.4.0.jar
+curl -O https://packages.confluent.io/maven/io/confluent/kafka-schema-serializer/7.4.0/kafka-schema-serializer-7.4.0.jar
+curl -O https://packages.confluent.io/maven/io/confluent/kafka-schema-converter/7.4.0/kafka-schema-converter-7.4.0.jar
+curl -O https://packages.confluent.io/maven/io/confluent/kafka-avro-serializer/7.4.0/kafka-avro-serializer-7.4.0.jar
+curl -O https://packages.confluent.io/maven/io/confluent/kafka-connect-avro-converter/7.4.0/kafka-connect-avro-converter-7.4.0.jar
+curl -O https://packages.confluent.io/maven/io/confluent/kafka-connect-avro-data/7.4.0/kafka-connect-avro-data-7.4.0.jar
+curl -O https://packages.confluent.io/maven/io/confluent/common-utils/7.4.0/common-utils-7.4.0.jar
+curl -O https://packages.confluent.io/maven/io/confluent/common-config/7.4.0/common-config-7.4.0.jar
+curl -O https://repo1.maven.org/maven2/com/google/guava/guava/30.1.1-jre/guava-30.1.1-jre.jar
+curl -O https://repo1.maven.org/maven2/com/google/guava/failureaccess/1.0.1/failureaccess-1.0.1.jar
 ```
 
 ## Configure
