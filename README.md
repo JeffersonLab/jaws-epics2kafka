@@ -1,4 +1,4 @@
-# jaws-epics2kafka [![CI](https://github.com/JeffersonLab/jaws-epics2kafka/actions/workflows/ci.yml/badge.svg)](https://github.com/JeffersonLab/jaws-epics2kafka/actions/workflows/ci.yml) [![Docker](https://img.shields.io/docker/v/jeffersonlab/jaws-epics2kafka?sort=semver&label=DockerHub)](https://hub.docker.com/r/jeffersonlab/jaws-epics2kafka)
+# jaws-epics2kafka [![CI](https://github.com/JeffersonLab/jaws-epics2kafka/actions/workflows/ci.yaml/badge.svg)](https://github.com/JeffersonLab/jaws-epics2kafka/actions/workflows/ci.yaml) [![Docker](https://img.shields.io/docker/v/jeffersonlab/jaws-epics2kafka?sort=semver&label=DockerHub)](https://hub.docker.com/r/jeffersonlab/jaws-epics2kafka)
 An extenstion to the [epics2kafka](https://github.com/JeffersonLab/epics2kafka) Kafka Connector that adds a [Transform](https://kafka.apache.org/documentation.html#connect_transforms) plugin to serialize messages in the format required by [JAWS](https://github.com/JeffersonLab/jaws).
 
 ---
@@ -92,7 +92,8 @@ gradlew installDist
 **See**: [Docker Development Quick Reference](https://gist.github.com/slominskir/a7da801e8259f5974c978f9c3091d52c#development-quick-reference)
 
 ## Release
-1. Bump the version number in build.gradle and commit and push to GitHub (using [Semantic Versioning](https://semver.org/)).   
-1. Create a new release on the GitHub [Releases](https://github.com/JeffersonLab/jaws-epics2kafka/releases) page corresponding to same version in build.gradle (Enumerate changes and link issues). Run dist build and attach zip to release.
-1. [Publish to DockerHub](https://github.com/JeffersonLab/jaws-epics2kafka/actions/workflows/docker-publish.yml) GitHub Action should run automatically.
-1. Bump and commit quick start [image version](https://github.com/JeffersonLab/jaws-epics2kafka/blob/main/docker-compose.override.yml) after confirming new image works
+1. Bump the version number in the VERSION file and commit and push to GitHub (using [Semantic Versioning](https://semver.org/)).
+2. The [CD](https://github.com/JeffersonLab/jaws-epics2kafka/blob/main/.github/workflows/cd.yaml) GitHub Action should run automatically invoking:
+    - The [Create release](https://github.com/JeffersonLab/java-workflows/blob/main/.github/workflows/gh-release.yaml) GitHub Action to tag the source and create release notes summarizing any pull requests.   Edit the release notes to add any missing details.  A zip file artifact is attached to the release.
+    - The [Publish docker image](https://github.com/JeffersonLab/container-workflows/blob/main/.github/workflows/docker-publish.yaml) GitHub Action to create a new demo Docker image.
+
