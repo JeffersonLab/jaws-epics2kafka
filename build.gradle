@@ -5,6 +5,7 @@ plugins {
     id 'maven-publish'
     id 'distribution'
     id 'com.github.jk1.dependency-license-report' version '2.0'
+    id "com.diffplug.spotless" version "6.25.0"
 }
 
 description "JLab Kafka Connect transform from epics2kafka to JAWS"
@@ -123,4 +124,10 @@ licenseReport {
     filters = [new LicenseBundleNormalizer()]
     excludeOwnGroup = false
     allowedLicensesFile = new File("$projectDir/gradle/allowed-licenses.json")
+}
+
+spotless {
+    java {
+        googleJavaFormat()
+    }
 }
