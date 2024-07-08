@@ -60,4 +60,4 @@ services:
       - "5063:5064/udp"
       - "5066:5065/udp"
     volumes:
-      - ./examples/softioc-db:/db
+      - ./container/softioc/initdb.d:/db

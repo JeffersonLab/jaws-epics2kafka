@@ -34,4 +34,4 @@ services:
       STATUS_STORAGE_TOPIC: connect-status
       MONITOR_CHANNELS: "channel1|alarm-activations|a|alarm1,channel2|alarm-activations|a|alarm2,channel3|alarm-activations|a|alarm3"
     volumes:
-      - ./examples/connect-config:/config
+      - ./container/epics2kafka/initdb.d:/config
