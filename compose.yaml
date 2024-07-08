@@ -1,22 +1,22 @@
 services:
   kafka:
     extends:
-      file: deps.yml
+      file: deps.yaml
       service: kafka
 
   registry:
     extends:
-      file: deps.yml
+      file: deps.yaml
       service: registry
 
   jaws:
     extends:
-      file: deps.yml
+      file: deps.yaml
       service: jaws
 
   softioc:
     extends:
-      file: deps.yml
+      file: deps.yaml
       service: softioc
 
   epics2kafka:

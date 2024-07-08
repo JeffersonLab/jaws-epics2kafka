@@ -1,27 +1,27 @@
 services:
   kafka:
     extends:
-      file: docker-compose.yml
+      file: compose.yaml
       service: kafka
 
   registry:
     extends:
-      file: docker-compose.yml
+      file: compose.yaml
       service: registry
 
   jaws:
     extends:
-      file: docker-compose.yml
+      file: compose.yaml
       service: jaws
 
   softioc:
     extends:
-      file: docker-compose.yml
+      file: compose.yaml
       service: softioc
 
   epics2kafka:
     extends:
-      file: docker-compose.yml
+      file: compose.yaml
       service: epics2kafka
     build:
       context: .
