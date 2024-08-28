@@ -37,7 +37,7 @@ services:
       - SCHEMA_REGISTRY_LISTENERS=http://0.0.0.0:8081
       - SCHEMA_REGISTRY_KAFKA_BROKERS=PLAINTEXT://kafka:9092
 
-  jaws:
+  cli:
     image: jeffersonlab/jaws-libp:4.9.2
     hostname: cli
     container_name: cli
