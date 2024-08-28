@@ -3,7 +3,7 @@ ARG RUN_IMAGE=jeffersonlab/epics2kafka:2.0.0
 ARG CUSTOM_CRT_URL=http://pki.jlab.org/JLabCA.crt
 
 ################## Stage 0
-FROM ${BUILD_IMAGE} as builder
+FROM ${BUILD_IMAGE} AS builder
 ARG CUSTOM_CRT_URL
 USER root
 WORKDIR /
@@ -17,7 +17,7 @@ COPY . /app
 RUN cd /app && gradle build -x test --no-watch-fs $OPTIONAL_CERT_ARG
 
 ################## Stage 1
-FROM ${RUN_IMAGE} as runner
+FROM ${RUN_IMAGE} AS runner
 ARG RUN_USER=1001
 ARG CUSTOM_CRT_URL
 USER root

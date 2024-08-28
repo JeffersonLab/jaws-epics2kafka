@@ -7,6 +7,7 @@ An extenstion to the [epics2kafka](https://github.com/JeffersonLab/epics2kafka) 
 - [Install](https://github.com/JeffersonLab/jaws-epics2kafka#install)
 - [Configure](https://github.com/JeffersonLab/jaws-epics2kafka#configure)  
 - [Build](https://github.com/JeffersonLab/jaws-epics2kafka#build)
+- [Develop](https://github.com/JeffersonLab/jaws-epics2kafka#develop) 
 - [Release](https://github.com/JeffersonLab/jaws-epics2kafka#release)
 ---
 
@@ -90,6 +91,27 @@ gradlew installDist
 **Note for JLab On-Site Users**: Jefferson Lab has an intercepting [proxy](https://gist.github.com/slominskir/92c25a033db93a90184a5994e71d0b78)
 
 **See**: [Docker Development Quick Reference](https://gist.github.com/slominskir/a7da801e8259f5974c978f9c3091d52c#development-quick-reference)
+
+## Develop
+In order to iterate rapidly when making changes it's often useful to run the app directly on the local workstation, perhaps leveraging an IDE. This app runs as a plugin to Kafka, and depends on Kafka being installed and having the epics2kafka Connector (plugin) already installed as well.  It's therefore easier to get started (but slower to iterate) to simply rely on the Docker container build.  In this scenario run the container build with:
+```
+docker compose -f build.yaml --progress=plain build --no-cache epics2kafka
+```
+
+Then run with:
+```
+docker compose -f build.yaml up
+```
+
+Re-deploy after making code changes with:
+```
+docker compose -f build.yaml down
+docker compose -f build.yaml --progress=plain build --no-cache epics2kafka
+docker compose -f build.yaml up
+```
+
+**Note**: For faster iteration it is possible to use `deps.yaml` for service dependencies and then install and configure a local instance of Kafka for hosting the Connect app.   Scripted deployment (example: `gradlew run`) would be
+nice for this scenario (but isn't currently provided). 
 
 ## Release
 1. Bump the version number in the VERSION file and commit and push to GitHub (using [Semantic Versioning](https://semver.org/)).
