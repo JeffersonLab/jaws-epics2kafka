@@ -1,27 +1,27 @@
 services:
   kafka:
     extends:
-      file: build.yml
+      file: build.yaml
       service: kafka
 
   registry:
     extends:
-      file: build.yml
+      file: build.yaml
       service: registry
 
   cli:
     extends:
-      file: build.yml
+      file: build.yaml
       service: cli
 
   softioc:
     extends:
-      file: build.yml
+      file: build.yaml
       service: softioc
 
   epics2kafka:
     extends:
-      file: build.yml
+      file: build.yaml
       service: epics2kafka
     volumes:
       - ./build/install:/plugins
