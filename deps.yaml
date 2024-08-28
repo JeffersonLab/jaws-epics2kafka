@@ -39,8 +39,8 @@ services:
 
   jaws:
     image: jeffersonlab/jaws-libp:4.9.2
-    hostname: jaws
-    container_name: jaws
+    hostname: cli
+    container_name: cli
     depends_on:
       - kafka
       - registry

@@ -29,7 +29,7 @@ docker compose up
 ```
 3. Monitor the alarm-activations topic
 ```
-docker exec -it jaws list_activations --monitor
+docker exec -it cli list_activations --monitor
 ```
 4. Trip an alarm
 ```

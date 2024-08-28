@@ -9,10 +9,10 @@ services:
       file: build.yml
       service: registry
 
-  jaws:
+  cli:
     extends:
       file: build.yml
-      service: jaws
+      service: cli
 
   softioc:
     extends:
