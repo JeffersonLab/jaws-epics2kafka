@@ -34,7 +34,7 @@ dependencies {
     compileOnly 'org.apache.kafka:connect-transforms:3.5.0'
     implementation 'org.apache.avro:avro:1.11.2',
                    'io.confluent:kafka-connect-avro-data:7.4.0',
-                   'org.jlab:jaws-libj:4.8.0'
+                   'org.jlab:jaws-libj:5.0.0'
     testImplementation 'junit:junit:4.13.2'
 }
 
